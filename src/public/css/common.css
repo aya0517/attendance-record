@@ -1,5 +1,5 @@
 .header {
-    background: #000;
+    background: plum;
 }
 
 .header__inner {
@@ -14,11 +14,9 @@
     justify-content: space-between;
 }
 
-.header__logo {
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-    font-size: 24px;
+.logo-image {
+    width: 300px;
+    height: auto;
 }
 
 .header-utilities nav {
