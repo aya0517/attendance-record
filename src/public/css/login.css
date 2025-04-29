@@ -61,3 +61,24 @@
     margin-top: 20px;
     text-align: center;
 }
+
+@media screen and (min-width: 1400px) and (max-width: 1540px) {
+    .form {
+        width: 30%;
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 850px) {
+    .form {
+        width: 80%;
+    }
+
+    .form__group-title {
+        font-size: 16px;
+    }
+
+    .form__button-submit {
+        height: 45px;
+        font-size: 16px;
+    }
+}
