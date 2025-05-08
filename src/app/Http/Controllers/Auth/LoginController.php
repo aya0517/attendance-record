@@ -19,12 +19,8 @@ class LoginController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('/home');
+            return redirect()->intended('/attendance');
         }
-
-        return back()->withErrors([
-            'email' => '認証に失敗しました。',
-        ]);
     }
 
     public function logout()
