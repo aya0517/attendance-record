@@ -8,6 +8,8 @@ class AuthController extends Controller
 {
     public function index()
     {
-        return view('index');
+        return view('attendance', [
+        'status' => 'before_work',
+    ]);
     }
 }

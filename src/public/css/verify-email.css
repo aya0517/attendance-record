@@ -1,0 +1,40 @@
+.verify-container {
+    max-width: 600px;
+    margin: 100px auto;
+    text-align: center;
+}
+
+.verify-message {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 40px;
+}
+
+.verify-button {
+    display: inline-block;
+    padding: 12px 30px;
+    background-color: #eee;
+    border: 2px solid purple;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: bold;
+    color: purple ;
+    text-decoration: none;
+    margin-bottom: 20px;
+}
+
+.verify-button:hover {
+    background-color: #ddd;
+}
+
+.resend-link {
+    font-size: 14px;
+    color: #007BFF;
+    text-decoration: underline;
+    margin-top: 20px;
+    display: inline-block;
+}
+
+.resend-link:hover {
+    text-decoration: underline;
+}

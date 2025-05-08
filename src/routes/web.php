@@ -5,6 +5,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use App\Http\Controllers\AttendanceController;
 
 
 /*
@@ -50,3 +51,5 @@ Route::post('/email/verification-notification', function () {
 Route::get('/attendance', [AuthController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('attendance');
+
+    Route::post('/attendance/list', [AttendanceController::class, 'handleList'])->name('attendance.list');
