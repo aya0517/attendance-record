@@ -52,6 +52,6 @@ Route::get('/attendance', [AuthController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('attendance');
 
-    Route::post('/attendance/list', [AttendanceController::class, 'handleList'])->name('attendance.list');
-
-    Route::get('/attendance', [AttendanceController::class, 'index'])->middleware('auth');
+Route::post('/attendance/list', [AttendanceController::class, 'handleList'])
+    ->middleware(['auth', 'verified'])
+    ->name('attendance.list');
