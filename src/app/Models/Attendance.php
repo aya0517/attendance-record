@@ -15,6 +15,10 @@ class Attendance extends Model
         'start_time',
         'end_time',
         'note',
+        'status',
+        'on_break',
+        'break_started_at',
+        'break_ended_at',
     ];
 
     public function user()

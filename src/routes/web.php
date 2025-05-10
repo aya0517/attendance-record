@@ -53,3 +53,5 @@ Route::get('/attendance', [AuthController::class, 'index'])
     ->name('attendance');
 
     Route::post('/attendance/list', [AttendanceController::class, 'handleList'])->name('attendance.list');
+
+    Route::get('/attendance', [AttendanceController::class, 'index'])->middleware('auth');
