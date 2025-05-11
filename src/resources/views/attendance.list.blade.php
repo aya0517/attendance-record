@@ -5,42 +5,38 @@
 @endsection
 
 @section('content')
-<div class="attendance-container">
-    <div class="status-badge">
-        @switch($status)
-            @case('working') 勤務中 @break
-            @case('on_break') 休憩中 @break
-            @case('ended') 退勤済 @break
-            @default 勤務外
-        @endswitch
+<div class="attendance-list-container">
+    <h2 class="attendance-title">勤怠一覧</h2>
+
+    <div class="attendance-filter">
+        <button class="prev-month">← 前月</button>
+        <span class="current-month">{{ \Carbon\Carbon::now()->format('Y/m') }}</span>
+        <button class="next-month">翌月 →</button>
     </div>
 
-    <div class="date-display">
-        {{ \Carbon\Carbon::now()->format('Y年n月j日(D)') }}
-    </div>
-
-    <div class="time-display">
-        {{ \Carbon\Carbon::now()->format('H:i') }}
-    </div>
-
-    <form method="POST" action="{{ route('attendance.list') }}">
-        @csrf
-
-        @if ($status === 'off')
-            <button type="submit" name="action" value="start" class="main-button">出勤</button>
-
-        @elseif ($status === 'working')
-            <div class="button-group">
-                <button type="submit" name="action" value="end" class="main-button">退勤</button>
-                <button type="submit" name="action" value="break_start" class="main-button">休憩入</button>
-            </div>
-
-        @elseif ($status === 'on_break')
-            <button type="submit" name="action" value="break_end" class="main-button">休憩戻</button>
-
-        @elseif ($status === 'ended')
-            <p class="thank-message">お疲れ様でした。</p>
-        @endif
-    </form>
+    <table class="attendance-table">
+        <thead>
+            <tr>
+                <th>日付</th>
+                <th>出勤</th>
+                <th>退勤</th>
+                <th>休憩</th>
+                <th>合計</th>
+                <th>詳細</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($attendances as $attendance)
+            <tr>
+                <td>{{ \Carbon\Carbon::parse($attendance->date)->format('m/d(D)') }}</td>
+                <td>{{ $attendance->start_time ?? '-' }}</td>
+                <td>{{ $attendance->end_time ?? '-' }}</td>
+                <td>{{ $attendance->break_duration ?? '-' }}</td>
+                <td>{{ $attendance->total_work_time ?? '-' }}</td>
+                <td><a href="#">詳細</a></td>
+            </tr>
+            @endforeach
+        </tbody>
+    </table>
 </div>
 @endsection

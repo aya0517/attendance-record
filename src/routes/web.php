@@ -47,11 +47,17 @@ Route::post('/email/verification-notification', function () {
     return back()->with('message', '確認メールを再送信しました。');
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
-// 勤怠画面（ログイン + メール認証済み）
-Route::get('/attendance', [AuthController::class, 'index'])
+// 勤怠打刻画面（表示・出勤/退勤/休憩ボタン）
+Route::get('/attendance', [AttendanceController::class, 'index'])
     ->middleware(['auth', 'verified'])
     ->name('attendance');
 
+// 打刻アクション（POST）
 Route::post('/attendance/list', [AttendanceController::class, 'handleList'])
     ->middleware(['auth', 'verified'])
     ->name('attendance.list');
+
+// 勤怠一覧画面（ログイン済みユーザーの今月の勤怠記録）
+Route::get('/attendance/index', [AttendanceController::class, 'showList'])
+    ->middleware(['auth', 'verified'])
+    ->name('attendance.index');

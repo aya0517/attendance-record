@@ -15,6 +15,8 @@
         @endswitch
     </div>
 
+    <p style="color: red;">STATUS: {{ $status ?? '未定義' }}</p>
+
     <div class="date-display">
         {{ \Carbon\Carbon::now()->format('Y年n月j日(D)') }}
     </div>
