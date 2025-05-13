@@ -54,3 +54,44 @@
     justify-content: center;
     gap: 20px;
 }
+
+@media screen and (min-width: 768px) and (max-width: 850px) {
+    .attendance-container {
+        max-width: 90%;
+        padding: 50px 20px;
+    }
+
+    .time-display {
+        font-size: 48px;
+    }
+
+    .main-button {
+        font-size: 22px;
+        padding: 10px 30px;
+    }
+
+    .date-display {
+        font-size: 22px;
+    }
+}
+
+@media screen and (min-width: 1400px) and (max-width: 1540px) {
+    .attendance-container {
+        max-width: 600px;
+        padding: 70px 30px;
+    }
+
+    .time-display {
+        font-size: 72px;
+    }
+
+    .main-button {
+        font-size: 28px;
+        padding: 14px 50px;
+    }
+
+    .date-display {
+        font-size: 28px;
+    }
+}
+

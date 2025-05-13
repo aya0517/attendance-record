@@ -53,11 +53,11 @@ Route::get('/attendance', [AttendanceController::class, 'index'])
     ->name('attendance');
 
 // 打刻アクション（POST）
-Route::post('/attendance/list', [AttendanceController::class, 'handleList'])
+Route::post('/attendance/punch', [AttendanceController::class, 'handlePunch'])
     ->middleware(['auth', 'verified'])
-    ->name('attendance.list');
+    ->name('attendance.punch');
 
 // 勤怠一覧画面（ログイン済みユーザーの今月の勤怠記録）
-Route::get('/attendance/index', [AttendanceController::class, 'showList'])
+Route::get('/attendance/list', [AttendanceController::class, 'showList'])
     ->middleware(['auth', 'verified'])
-    ->name('attendance.index');
+    ->name('attendance.list');

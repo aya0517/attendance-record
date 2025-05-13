@@ -1,0 +1,69 @@
+.attendance-list-container {
+    background-color: #f5f4f6;
+    padding: 40px;
+    border-radius: 8px;
+    max-width: 800px;
+    margin: 40px auto;
+    font-family: "Hiragino Kaku Gothic ProN", sans-serif;
+}
+
+.attendance-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    border-left: 4px solid #000;
+    padding-left: 10px;
+}
+
+.attendance-filter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 25px;
+    gap: 40px;
+}
+
+.attendance-filter button {
+    background-color: transparent;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #444;
+}
+
+.current-month {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.attendance-table th,
+.attendance-table td {
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+}
+
+.attendance-table th {
+    background-color: #f3f3f3;
+    font-weight: bold;
+}
+
+.attendance-table tr:hover {
+    background-color: #f9f9f9;
+}
+
+.attendance-table a {
+    color: #000;
+    text-decoration: underline;
+    font-weight: bold;
+    font-size: 13px;
+}

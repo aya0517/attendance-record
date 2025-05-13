@@ -25,7 +25,7 @@
         {{ \Carbon\Carbon::now()->format('H:i') }}
     </div>
 
-    <form method="POST" action="{{ route('attendance.list') }}">
+    <form method="POST" action="{{ route('attendance.punch') }}">
         @csrf
 
         @if ($status === 'off')

@@ -46,7 +46,7 @@ class AttendanceController extends Controller
     /**
      * 勤怠の打刻処理（出勤・退勤・休憩入・休憩戻）
      */
-    public function handleList(Request $request)
+    public function handlePunch(Request $request)
     {
         $action = $request->input('action');
         $user = Auth::user();
@@ -57,12 +57,6 @@ class AttendanceController extends Controller
         ]);
 
         $attendance->date = now()->toDateString();
-
-        \Log::info('出勤アクション実行', [
-    'user_id' => $user->id,
-    'date' => $attendance->date,
-    'status' => $attendance->status
-]);
 
         switch ($action) {
             case 'start':
@@ -123,7 +117,25 @@ class AttendanceController extends Controller
             ->orderBy('date')
             ->get();
 
-        return view('attendance_index', compact('attendances'));
+        foreach ($attendances as $attendance) {
+            $totalBreakSeconds = $attendance->breaks->sum(function ($break) {
+                if ($break->started_at && $break->ended_at) {
+                    return \Carbon\Carbon::parse($break->ended_at)->diffInSeconds(\Carbon\Carbon::parse($break->started_at));
+                }
+                return 0;
+            });
+
+            $attendance->break_duration = gmdate('H:i', $totalBreakSeconds);
+
+            if ($attendance->start_time && $attendance->end_time) {
+                $totalWorkSeconds = \Carbon\Carbon::parse($attendance->end_time)->diffInSeconds(\Carbon\Carbon::parse($attendance->start_time)) - $totalBreakSeconds;
+                $attendance->total_work_time = gmdate('H:i', $totalWorkSeconds);
+            } else {
+                $attendance->total_work_time = '-';
+            }
+        }
+
+        return view('attendance_list', compact('attendances'));
     }
 
 }

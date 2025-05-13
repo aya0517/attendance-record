@@ -8,7 +8,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::table('attendances', function (Blueprint $table) {
-            $table->string('status')->default('off')->after('note'); // off, working, on_break, ended
+            $table->string('status')->default('off')->after('note');
             $table->boolean('on_break')->default(false)->after('status');
             $table->time('break_started_at')->nullable()->after('on_break');
             $table->time('break_ended_at')->nullable()->after('break_started_at');

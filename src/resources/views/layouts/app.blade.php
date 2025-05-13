@@ -30,6 +30,13 @@
                                 <button class="header-nav__button">ログアウト</button>
                             </form>
                         </li>
+                        @else
+                            <li class="header-nav__item">
+                                <a class="header-nav__link" href="{{ route('login') }}">ログイン</a>
+                            </li>
+                            <li class="header-nav__item">
+                                <a class="header-nav__link" href="{{ route('register') }}">会員登録</a>
+                            </li>
                         @endif
                     </ul>
                 </nav>
