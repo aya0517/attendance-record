@@ -6,7 +6,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\AttendanceController;
-
+use App\Http\Controllers\RequestController;
+use App\Http\Controllers\Admin\Auth\AdminLoginController;
 
 /*
 |--------------------------------------------------------------------------
@@ -61,3 +62,22 @@ Route::post('/attendance/punch', [AttendanceController::class, 'handlePunch'])
 Route::get('/attendance/list', [AttendanceController::class, 'showList'])
     ->middleware(['auth', 'verified'])
     ->name('attendance.list');
+
+Route::get('/attendance/list/{year?}/{month?}', [AttendanceController::class, 'showList'])->name('attendance.list');
+
+Route::get('/attendance/{id}', [AttendanceController::class, 'showDetail'])->name('attendance.detail');
+
+// 修正申請保存（POST）
+Route::post('/stamp_correction_request/{attendance}', [RequestController::class, 'store'])
+    ->middleware('auth')
+    ->name('stamp_correction.store');
+
+// 修正申請一覧（GET）※
+Route::get('/stamp_correction_request/list', [RequestController::class, 'index'])
+    ->middleware('auth')
+    ->name('stamp_correction.list');
+
+Route::prefix('admin')->middleware(['web'])->group(function () {
+    Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
+    Route::post('/login', [AdminLoginController::class, 'login']);
+});

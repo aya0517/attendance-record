@@ -28,6 +28,6 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('attendance')->with('success', '登録が完了しました。');
+        return redirect()->route('attendance');
     }
 }

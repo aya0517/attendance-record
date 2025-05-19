@@ -1,39 +1,59 @@
 .attendance-list-container {
-    background-color: #f5f4f6;
     padding: 40px;
     border-radius: 8px;
     max-width: 800px;
     margin: 40px auto;
-    font-family: "Hiragino Kaku Gothic ProN", sans-serif;
 }
 
 .attendance-title {
     font-size: 24px;
     font-weight: bold;
     margin-bottom: 30px;
-    border-left: 4px solid #000;
+    border-left: 4px solid rgb(105, 104, 104);
     padding-left: 10px;
 }
 
 .attendance-filter {
+    background-color: rgba(221, 160, 221, 0.5);
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 25px;
+    padding: 10px 25px;
+    border-radius: 8px;
     gap: 40px;
+    font-size: 16px;
 }
 
-.attendance-filter button {
-    background-color: transparent;
-    border: none;
+.attendance-filter a {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: #888;
+    text-decoration: none;
     font-size: 16px;
-    cursor: pointer;
-    color: #444;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.attendance-filter .prev::before{
+    content: "←";
+    font-size: 16px;
+}
+
+.attendance-filter .next::after {
+    content: "→";
+    font-size: 16px;
+    margin-left: 6px;
 }
 
 .current-month {
     font-weight: bold;
     font-size: 18px;
+    color: rgb(105, 104, 104);
+    text-decoration: none;
 }
 
 .attendance-table {
@@ -55,6 +75,7 @@
 .attendance-table th {
     background-color: #f3f3f3;
     font-weight: bold;
+    color: rgb(105, 104, 104);
 }
 
 .attendance-table tr:hover {
@@ -62,8 +83,76 @@
 }
 
 .attendance-table a {
-    color: #000;
+    color: rgb(105, 104, 104);
     text-decoration: underline;
     font-weight: bold;
     font-size: 13px;
+}
+
+@media screen and (min-width: 1400px) and (max-width: 1540px) {
+    .attendance-list-container {
+        max-width: 1000px;
+        padding: 40px 60px;
+    }
+
+    .attendance-title {
+        font-size: 26px;
+    }
+
+    .attendance-filter {
+        gap: 80px;
+        font-size: 18px;
+        padding: 15px 40px;
+    }
+
+    .attendance-filter a {
+        font-size: 18px;
+    }
+
+    .current-month {
+        font-size: 20px;
+    }
+
+    .attendance-table th,
+    .attendance-table td {
+        font-size: 15px;
+        padding: 14px;
+    }
+}
+
+@media screen and (min-width: 768px) and (max-width: 850px) {
+    .attendance-list-container {
+        max-width: 90%;
+        padding: 20px;
+    }
+
+    .attendance-title {
+        font-size: 22px;
+    }
+
+    .attendance-filter {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        font-size: 15px;
+        padding: 12px 16px;
+    }
+
+    .attendance-filter a {
+        font-size: 15px;
+    }
+
+    .current-month {
+        font-size: 17px;
+    }
+
+    .attendance-table {
+        font-size: 13px;
+    }
+
+    .attendance-table th,
+    .attendance-table td {
+        font-size: 13px;
+        padding: 10px;
+    }
 }

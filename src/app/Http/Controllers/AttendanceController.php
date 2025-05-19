@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Attendance;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\AttendanceRequest;
+use App\Models\StampCorrectionRequest;
 
 class AttendanceController extends Controller
 {
@@ -108,9 +110,15 @@ class AttendanceController extends Controller
     }
 
 
-    public function showList()
+    public function showList(Request $request)
     {
         $user = Auth::user();
+
+        $monthParam = $request->input('month');
+
+        $targetDate = $monthParam
+        ? \Carbon\Carbon::createFromFormat('Y-m', $monthParam)->startOfMonth()
+        : now()->startOfMonth();
 
         $attendances = Attendance::where('user_id', $user->id)
             ->whereMonth('date', now()->month)
@@ -131,11 +139,43 @@ class AttendanceController extends Controller
                 $totalWorkSeconds = \Carbon\Carbon::parse($attendance->end_time)->diffInSeconds(\Carbon\Carbon::parse($attendance->start_time)) - $totalBreakSeconds;
                 $attendance->total_work_time = gmdate('H:i', $totalWorkSeconds);
             } else {
-                $attendance->total_work_time = '-';
+                $attendance->total_work_time = '';
             }
         }
 
-        return view('attendance_list', compact('attendances'));
+        return view('attendance_list', [
+        'attendances' => $attendances,
+        'currentMonth' => $targetDate,
+        'prevMonth' => $targetDate->copy()->subMonth()->format('Y-m'),
+        'nextMonth' => $targetDate->copy()->addMonth()->format('Y-m'),
+        ]);
+    }
+
+    public function showDetail($id)
+    {
+        $attendance = Attendance::with('breaks')->findOrFail($id);
+
+        $totalBreakSeconds = $attendance->breaks->sum(function ($break) {
+            if ($break->started_at && $break->ended_at) {
+                return \Carbon\Carbon::parse($break->ended_at)->diffInSeconds(\Carbon\Carbon::parse($break->started_at));
+            }
+            return 0;
+        });
+
+        $breakDuration = gmdate('H:i', $totalBreakSeconds);
+
+        if ($attendance->start_time && $attendance->end_time) {
+            $totalWorkSeconds = \Carbon\Carbon::parse($attendance->end_time)->diffInSeconds(\Carbon\Carbon::parse($attendance->start_time)) - $totalBreakSeconds;
+            $totalWorkTime = gmdate('H:i', $totalWorkSeconds);
+        } else {
+            $totalWorkTime = '-';
+        }
+
+        $pendingRequest = StampCorrectionRequest::where('attendance_id', $attendance->id)
+            ->where('status', 'pending')
+            ->exists();
+
+        return view('attendance_detail', compact('attendance', 'breakDuration', 'totalWorkTime', 'pendingRequest'));
     }
 
 }
