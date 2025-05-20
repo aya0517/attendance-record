@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\LoginRequest;
+use Illuminate\Support\Facades\Log;
 
 class AdminLoginController extends Controller
 {
@@ -14,18 +15,24 @@ class AdminLoginController extends Controller
         return view('admin.auth.login');
     }
 
-    public function login(LoginRequest $request)
-    {
-        $credentials = $request->only('email', 'password');
+public function login(Request $request)
+{
+    $credentials = $request->only('email', 'password');
 
-        if (Auth::guard('admin')->attempt($credentials)) {
-            return redirect()->intended('/admin/dashboard');
-        }
+    Log::info('認証を試みます', $credentials);
 
-        return back()->withErrors([
-            'email' => 'ログイン情報が登録されていません。'
-        ])->withInput();
+    if (Auth::guard('admin')->attempt($credentials)) {
+        Log::info('ログイン成功', ['admin_id' => Auth::guard('admin')->id()]);
+        return redirect()->intended('/admin/attendance/list');
     }
+
+    Log::warning('ログイン失敗', ['credentials' => $credentials]);
+
+    return back()->withErrors([
+        'email' => 'ログイン情報が登録されていません。'
+    ])->withInput();
+}
+
 
     public function logout()
         {

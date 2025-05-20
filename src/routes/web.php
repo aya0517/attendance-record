@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\Admin\Auth\AdminLoginController;
+use App\Http\Controllers\Admin\AdminAttendanceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -80,4 +81,8 @@ Route::get('/stamp_correction_request/list', [RequestController::class, 'index']
 Route::prefix('admin')->middleware(['web'])->group(function () {
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AdminLoginController::class, 'login']);
+
+    Route::get('/attendance/list', [AdminAttendanceController::class, 'index'])
+        ->middleware('auth:admin')
+        ->name('admin.attendance.list');
 });

@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Models\User;
 use App\Models\Attendance;
 use Illuminate\Support\Facades\Hash;
+use App\Models\Admin;
 
 class UserAndAttendanceSeeder extends Seeder
 {
@@ -15,15 +16,13 @@ class UserAndAttendanceSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         Attendance::truncate();
         User::truncate();
-
+        Admin::truncate();
         DB::statement('SET FOREIGN_KEY_CHECKS=1;');
 
-
-        $admin = User::factory()->create([
+        Admin::create([
             'name' => '管理者',
             'email' => 'admin@example.com',
             'password' => Hash::make('admin1234'),
-            'is_admin' => true,
         ]);
 
         User::factory(10)->create()->each(function ($user) {
