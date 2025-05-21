@@ -82,7 +82,7 @@ Route::prefix('admin')->middleware(['web'])->group(function () {
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AdminLoginController::class, 'login']);
 
-    Route::get('/attendance/list', [AdminAttendanceController::class, 'index'])
+    Route::get('/attendance/list', [AdminAttendanceController::class, 'showDaily'])
         ->middleware('auth:admin')
         ->name('admin.attendance.list');
 });
