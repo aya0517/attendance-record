@@ -85,4 +85,7 @@ Route::prefix('admin')->middleware(['web'])->group(function () {
     Route::get('/attendance/list', [AdminAttendanceController::class, 'showDaily'])
         ->middleware('auth:admin')
         ->name('admin.attendance.list');
+
+    Route::get('/attendance/requests/index', [RequestController::class, 'adminRequests'])
+        ->name('admin.attendance.requests');
 });

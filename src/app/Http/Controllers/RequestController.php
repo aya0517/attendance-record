@@ -49,5 +49,16 @@ class RequestController extends Controller
         return view('requests_index', compact('requests', 'status'));
     }
 
+    public function adminRequests(Request $request)
+    {
+        $status = $request->query('status', 'pending');
+
+        $requests = StampCorrectionRequest::with(['user', 'attendance'])
+            ->where('status', $status)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return view('admin.attendance.requests_index', compact('requests', 'status'));
+    }
 
 }
