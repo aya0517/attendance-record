@@ -5,13 +5,10 @@
 .header__inner {
     margin: 0 auto;
     padding: 10px 15px;
-    max-width: 1230px;
-}
-
-.header-utilities {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    max-width: 1230px;
 }
 
 .logo-image {
@@ -20,14 +17,17 @@
 }
 
 .header-utilities nav {
-    width: 300px;
+    width: auto;
 }
 
 .header-nav {
     display: flex;
-    gap: 15px;
+    gap: 20px;
     align-items: center;
-    justify-content: space-between;
+    list-style: none;
+    justify-content: flex-end;
+    margin: 0;
+    padding: 0;
 }
 
 .header-nav__link {

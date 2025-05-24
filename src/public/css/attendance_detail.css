@@ -1,3 +1,9 @@
+.error-text {
+    color: red;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
 .attendance-detail-container {
     max-width: 700px;
     margin: 80px auto;

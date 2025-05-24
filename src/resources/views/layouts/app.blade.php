@@ -14,33 +14,30 @@
 <body>
     <header class="header">
         <div class="header__inner">
-            <div class="header-utilities">
-                <a href="{{ url('/') }}" class="header__logo">
+            <a href="{{ url('/') }}" class="header__logo">
                 <img src="{{ asset('images/logo.svg') }}" alt="Logo" class="logo-image">
-                </a>
-                <nav>
+            </a>
+
+            @auth
+                @if (Auth::guard('web')->check())
+                <nav class="header__nav">
                     <ul class="header-nav">
-                        @if (Auth::check())
                         <li class="header-nav__item">
-                            <a class="header-nav__link" href="/mypage">マイページ</a>
-                        </li>
+                            <a class="header-nav__link" href="{{ route('attendance') }}">勤怠</a></li>
+                        <li class="header-nav__item">
+                            <a class="header-nav__link"  href="{{ route('attendance.list') }}">勤怠一覧</a></li>
+                        <li class="header-nav__item">
+                            <a class="header-nav__link"  href="{{ route('stamp_correction.list') }}">申請</a></li>
                         <li class="header-nav__item">
                             <form action="{{ route('logout') }}" method="post">
                                 @csrf
                                 <button class="header-nav__button">ログアウト</button>
                             </form>
                         </li>
-                        @else
-                            <li class="header-nav__item">
-                                <a class="header-nav__link" href="{{ route('login') }}">ログイン</a>
-                            </li>
-                            <li class="header-nav__item">
-                                <a class="header-nav__link" href="{{ route('register') }}">会員登録</a>
-                            </li>
-                        @endif
                     </ul>
                 </nav>
-            </div>
+                @endif
+            @endauth
         </div>
     </header>
 

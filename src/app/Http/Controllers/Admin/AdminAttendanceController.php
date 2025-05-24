@@ -8,6 +8,7 @@ use App\Models\Attendance;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use App\Http\Requests\AttendanceRequest;
 
 class AdminAttendanceController extends Controller
 {
@@ -48,38 +49,30 @@ class AdminAttendanceController extends Controller
         return view('admin.attendance.detail', compact('attendance'));
     }
 
-    public function update(Request $request, $id)
+    public function update(AttendanceRequest $request, $id)
     {
-        $request->validate([
-            'start_time'   => 'nullable|date_format:H:i',
-            'end_time'     => 'nullable|date_format:H:i|after_or_equal:start_time',
-            'break_start'  => 'nullable|date_format:H:i',
-            'break_end'    => 'nullable|date_format:H:i|after_or_equal:break_start',
-            'note'         => 'nullable|string|max:255',
-        ]);
-
         DB::transaction(function () use ($request, $id) {
             $attendance = Attendance::with('breaks')->findOrFail($id);
 
-            $attendance->start_time = $request->input('start_time');
-            $attendance->end_time = $request->input('end_time');
-            $attendance->note = $request->input('note');
+            $attendance->start_time = $request->start_time;
+            $attendance->end_time = $request->end_time;
+            $attendance->note = $request->note;
             $attendance->save();
 
             $break = $attendance->breaks->first();
             if ($break) {
-                $break->started_at = $request->input('break_start');
-                $break->ended_at = $request->input('break_end');
+                $break->started_at = $request->break_start;
+                $break->ended_at = $request->break_end;
                 $break->save();
             } else {
                 $attendance->breaks()->create([
-                    'started_at' => $request->input('break_start'),
-                    'ended_at' => $request->input('break_end'),
+                    'started_at' => $request->break_start,
+                    'ended_at' => $request->break_end,
                 ]);
             }
         });
 
-        return redirect()->route('admin.attendance.detail', $id);
-}
+        return redirect()->route('admin.attendance.detail', $id)->with('success', '勤怠情報を更新しました。');
+    }
 
 }

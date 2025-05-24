@@ -3,6 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Validation\ValidationException;
 
 class AttendanceRequest extends FormRequest
 {
@@ -14,20 +16,10 @@ class AttendanceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'start_time' => ['required', 'date_format:H:i', 'before:end_time'],
-            'end_time' => ['required', 'date_format:H:i', 'after:start_time'],
-            'break_start' => [
-                'required',
-                'date_format:H:i',
-                'after_or_equal:start_time',
-                'before:end_time'
-            ],
-            'break_end' => [
-                'required',
-                'date_format:H:i',
-                'after_or_equal:start_time',
-                'before:end_time'
-            ],
+            'start_time' => ['required', 'date_format:H:i'],
+            'end_time' => ['required', 'date_format:H:i'],
+            'break_start' => ['required', 'date_format:H:i'],
+            'break_end' => ['required', 'date_format:H:i'],
             'note' => ['required', 'string'],
         ];
     }
@@ -36,16 +28,31 @@ class AttendanceRequest extends FormRequest
     {
         return [
             'start_time.required' => '出勤時間は必須です。',
-            'start_time.before' => '出勤時間は退勤時間より前である必要があります。',
             'end_time.required' => '退勤時間は必須です。',
-            'end_time.after' => '退勤時間は出勤時間より後である必要があります。',
             'break_start.required' => '休憩開始時間は必須です。',
-            'break_start.after_or_equal' => '休憩開始は出勤時間以降である必要があります。',
-            'break_start.before' => '休憩開始は退勤時間より前である必要があります。',
             'break_end.required' => '休憩終了時間は必須です。',
-            'break_end.after_or_equal' => '休憩終了は出勤時間以降である必要があります。',
-            'break_end.before' => '休憩終了は退勤時間より前である必要があります。',
-            'note.required' => '備考は必須です。',
+            'note.required' => '備考を記入してください',
         ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+            $start = strtotime($this->input('start_time'));
+            $end = strtotime($this->input('end_time'));
+            $breakStart = strtotime($this->input('break_start'));
+            $breakEnd = strtotime($this->input('break_end'));
+
+            if ($start !== false && $end !== false && $start >= $end) {
+                $validator->errors()->add('start_time', '出勤時間もしくは退勤時間が不適切な値です');
+            }
+
+            if (
+                ($breakStart < $start || $breakStart > $end) ||
+                ($breakEnd < $start || $breakEnd > $end)
+            ) {
+                $validator->errors()->add('break_start', '休憩時間が勤務時間外です');
+            }
+        });
     }
 }
