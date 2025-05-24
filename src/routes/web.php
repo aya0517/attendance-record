@@ -86,6 +86,14 @@ Route::prefix('admin')->middleware(['web'])->group(function () {
         ->middleware('auth:admin')
         ->name('admin.attendance.list');
 
+    Route::get('/attendance/{id}', [AdminAttendanceController::class, 'showDetail'])
+        ->middleware('auth:admin')
+        ->name('admin.attendance.detail');
+
+    Route::patch('/attendance/{id}', [AdminAttendanceController::class, 'update'])
+        ->middleware('auth:admin')
+        ->name('admin.attendance.update');
+
     Route::get('/attendance/requests/index', [RequestController::class, 'adminRequests'])
         ->name('admin.attendance.requests');
-});
+    });
