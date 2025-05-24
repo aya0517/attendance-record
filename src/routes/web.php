@@ -96,4 +96,9 @@ Route::prefix('admin')->middleware(['web'])->group(function () {
 
     Route::get('/attendance/requests/index', [RequestController::class, 'adminRequests'])
         ->name('admin.attendance.requests');
-    });
+});
+
+Route::post('/admin/logout', function () {
+    Auth::guard('admin')->logout();
+    return redirect('/admin/login');
+})->name('admin.logout');

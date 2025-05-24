@@ -18,26 +18,46 @@
                 <img src="{{ asset('images/logo.svg') }}" alt="Logo" class="logo-image">
             </a>
 
-            @auth
-                @if (Auth::guard('web')->check())
-                <nav class="header__nav">
-                    <ul class="header-nav">
-                        <li class="header-nav__item">
-                            <a class="header-nav__link" href="{{ route('attendance') }}">勤怠</a></li>
-                        <li class="header-nav__item">
-                            <a class="header-nav__link"  href="{{ route('attendance.list') }}">勤怠一覧</a></li>
-                        <li class="header-nav__item">
-                            <a class="header-nav__link"  href="{{ route('stamp_correction.list') }}">申請</a></li>
-                        <li class="header-nav__item">
-                            <form action="{{ route('logout') }}" method="post">
-                                @csrf
-                                <button class="header-nav__button">ログアウト</button>
-                            </form>
-                        </li>
-                    </ul>
-                </nav>
-                @endif
-            @endauth
+            @auth('admin')
+            <nav class="header__nav">
+                <ul class="header-nav">
+                    <li class="header-nav__item">
+                        <a class="header-nav__link" href="{{ route('admin.attendance.list') }}">勤怠一覧</a>
+                    </li>
+                    <li class="header-nav__item">
+                        <a class="header-nav__link" href="{{ route('admin.attendance.requests') }}">申請一覧</a>
+                    </li>
+                    <li class="header-nav__item">
+                        <form action="{{ route('admin.logout') }}" method="post">
+                            @csrf
+                            <button class="header-nav__button">ログアウト</button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+
+        {{-- 一般ユーザー --}}
+        @elseif(Auth::guard('web')->check())
+            <nav class="header__nav">
+                <ul class="header-nav">
+                    <li class="header-nav__item">
+                        <a class="header-nav__link" href="{{ route('attendance') }}">勤怠</a>
+                    </li>
+                    <li class="header-nav__item">
+                        <a class="header-nav__link" href="{{ route('attendance.list') }}">勤怠一覧</a>
+                    </li>
+                    <li class="header-nav__item">
+                        <a class="header-nav__link" href="{{ route('stamp_correction.list') }}">申請</a>
+                    </li>
+                    <li class="header-nav__item">
+                        <form action="{{ route('logout') }}" method="post">
+                            @csrf
+                            <button class="header-nav__button">ログアウト</button>
+                        </form>
+                    </li>
+                </ul>
+            </nav>
+        @endauth
         </div>
     </header>
 
