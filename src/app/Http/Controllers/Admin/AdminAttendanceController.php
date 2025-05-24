@@ -45,8 +45,13 @@ class AdminAttendanceController extends Controller
 
     public function showDetail($id)
     {
-        $attendance = Attendance::with(['user', 'breaks'])->findOrFail($id);
-        return view('admin.attendance.detail', compact('attendance'));
+        $attendance = Attendance::with(['user', 'breaks', 'stamp_correction_requests'])->findOrFail($id);
+
+        $pendingRequest = $attendance->stamp_correction_requests
+            ->where('status', 'pending')
+            ->isNotEmpty();
+
+        return view('admin.attendance.detail', compact('attendance', 'pendingRequest'));
     }
 
     public function update(AttendanceRequest $request, $id)
@@ -72,7 +77,7 @@ class AdminAttendanceController extends Controller
             }
         });
 
-        return redirect()->route('admin.attendance.detail', $id)->with('success', '勤怠情報を更新しました。');
+        return redirect()->route('admin.attendance.detail', $id);
     }
 
 }

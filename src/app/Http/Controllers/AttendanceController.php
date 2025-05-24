@@ -10,9 +10,6 @@ use App\Models\StampCorrectionRequest;
 
 class AttendanceController extends Controller
 {
-    /**
-     * 勤怠画面の表示（ステータスに応じたボタン切り替え）
-     */
     public function index()
     {
         $user = Auth::user();
@@ -21,12 +18,6 @@ class AttendanceController extends Controller
             ->whereDate('date', now()->toDateString())
             ->latest()
             ->first();
-
-        \Log::info('取得した勤怠データ', [
-        'id' => optional($attendance)->id,
-        'date' => optional($attendance)->date,
-        'status' => optional($attendance)->status,
-        ]);
 
         if (!$attendance) {
             $status = 'off';
@@ -40,14 +31,9 @@ class AttendanceController extends Controller
             $status = 'off';
         }
 
-        \Log::info('判定されたステータス', ['status' => $status]);
-
         return view('attendance', compact('status'));
     }
 
-    /**
-     * 勤怠の打刻処理（出勤・退勤・休憩入・休憩戻）
-     */
     public function handlePunch(Request $request)
     {
         $action = $request->input('action');
@@ -109,7 +95,6 @@ class AttendanceController extends Controller
         return redirect()->back();
     }
 
-
     public function showList(Request $request)
     {
         $user = Auth::user();
@@ -168,7 +153,7 @@ class AttendanceController extends Controller
             $totalWorkSeconds = \Carbon\Carbon::parse($attendance->end_time)->diffInSeconds(\Carbon\Carbon::parse($attendance->start_time)) - $totalBreakSeconds;
             $totalWorkTime = gmdate('H:i', $totalWorkSeconds);
         } else {
-            $totalWorkTime = '-';
+            $totalWorkTime = '';
         }
 
         $pendingRequest = StampCorrectionRequest::where('attendance_id', $attendance->id)

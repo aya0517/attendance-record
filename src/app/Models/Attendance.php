@@ -35,4 +35,10 @@ class Attendance extends Model
     {
         return $this->hasMany(RequestChange::class);
     }
+
+    public function stamp_correction_requests()
+    {
+        return $this->hasMany(\App\Models\StampCorrectionRequest::class, 'attendance_id');
+    }
+
 }

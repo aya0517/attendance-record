@@ -9,6 +9,8 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\RequestController;
 use App\Http\Controllers\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\Admin\AdminAttendanceController;
+use App\Http\Controllers\Admin\AdminRequestController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -62,9 +64,10 @@ Route::post('/attendance/punch', [AttendanceController::class, 'handlePunch'])
 // 勤怠一覧画面（ログイン済みユーザーの今月の勤怠記録）
 Route::get('/attendance/list', [AttendanceController::class, 'showList'])
     ->middleware(['auth', 'verified'])
-    ->name('attendance.list');
+    ->name('attendance.list.current');
 
-Route::get('/attendance/list/{year?}/{month?}', [AttendanceController::class, 'showList'])->name('attendance.list');
+Route::get('/attendance/list/{year?}/{month?}', [AttendanceController::class, 'showList'])
+    ->name('attendance.list');
 
 Route::get('/attendance/{id}', [AttendanceController::class, 'showDetail'])->name('attendance.detail');
 
@@ -78,27 +81,31 @@ Route::get('/stamp_correction_request/list', [RequestController::class, 'index']
     ->middleware('auth')
     ->name('stamp_correction.list');
 
-Route::prefix('admin')->middleware(['web'])->group(function () {
+Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AdminLoginController::class, 'login']);
 
     Route::get('/attendance/list', [AdminAttendanceController::class, 'showDaily'])
-        ->middleware('auth:admin')
         ->name('admin.attendance.list');
 
     Route::get('/attendance/{id}', [AdminAttendanceController::class, 'showDetail'])
-        ->middleware('auth:admin')
         ->name('admin.attendance.detail');
 
     Route::patch('/attendance/{id}', [AdminAttendanceController::class, 'update'])
-        ->middleware('auth:admin')
         ->name('admin.attendance.update');
 
-    Route::get('/attendance/requests/index', [RequestController::class, 'adminRequests'])
+    Route::get('/attendance/requests/index', [AdminRequestController::class, 'index'])
         ->name('admin.attendance.requests');
+
+    Route::post('/attendance/requests/approve/{id}', [AdminRequestController::class, 'approve'])
+        ->name('admin.attendance.approve');
+
+    Route::get('/attendance/requests/{request}', [AdminRequestController::class, 'showApprove'])
+        ->middleware('auth:admin')
+        ->name('admin.requests_approve');
 });
 
 Route::post('/admin/logout', function () {
     Auth::guard('admin')->logout();
     return redirect('/admin/login');
-})->name('admin.logout');
+})->middleware('auth:admin')->name('admin.logout');

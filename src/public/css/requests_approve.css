@@ -1,0 +1,155 @@
+.error-text {
+    color: red;
+    font-size: 14px;
+    margin-top: 4px;
+}
+
+.attendance-detail-container {
+    max-width: 700px;
+    margin: 80px auto;
+    padding: 40px;
+    border-radius: 10px;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 30px;
+    border-left: 6px solid black;
+    padding-left: 10px;
+}
+
+.attendance-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.attendance-table th {
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+    padding: 20px 0;
+    background: none;
+    width: 120px;
+    border: none;
+}
+
+.attendance-table td {
+    border: none;
+    border-bottom: 1px solid #eee;
+    font-size: 16px;
+    padding: 20px 0;
+}
+
+.time-box {
+    border: 1px solid #ccc;
+    padding: 6px 12px;
+    border-radius: 4px;
+    display: inline-block;
+    min-width: 70px;
+    text-align: center;
+    font-family: monospace;
+    background-color: white;
+}
+
+.time-separator {
+    margin: 0 8px;
+}
+
+.note-area {
+    width: 100%;
+    height: 60px;
+    padding: 10px;
+    font-size: 14px;
+    resize: none;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: white;
+}
+
+.button-area {
+    text-align: right;
+    margin-top: 30px;
+}
+
+.approved-button {
+    background-color: plum;
+    color: white;
+    padding: 10px 30px;
+    text-decoration: none;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+}
+
+.approved-button--done {
+    background-color: rgb(109, 82, 109);
+    color: #eee;
+    cursor: not-allowed;
+}
+
+@media (min-width: 1400px) and (max-width: 1540px) {
+    .attendance-detail-container {
+        max-width: 60%;
+        padding: 50px;
+    }
+
+    .page-title {
+        font-size: 26px;
+    }
+
+    .attendance-table th,
+    .attendance-table td {
+        font-size: 18px;
+        padding: 24px 0;
+    }
+
+    .time-box {
+        min-width: 80px;
+        font-size: 16px;
+    }
+
+    .note-area {
+        font-size: 16px;
+    }
+
+    .approved-button {
+        font-size: 18px;
+        padding: 12px 36px;
+    }
+
+}
+
+@media (min-width: 768px) and (max-width: 850px) {
+    .attendance-detail-container {
+        max-width: 90%;
+        padding: 30px 20px;
+    }
+
+    .page-title {
+        font-size: 22px;
+    }
+
+    .attendance-table th,
+    .attendance-table td {
+        font-size: 14px;
+        padding: 16px 0;
+    }
+
+    .time-box {
+        min-width: 65px;
+        font-size: 14px;
+    }
+
+    .note-area {
+        font-size: 14px;
+    }
+
+    .approved-button {
+        font-size: 16px;
+        padding: 10px 24px;
+    }
+}

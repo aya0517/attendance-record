@@ -8,6 +8,7 @@
 <div class="attendance-detail-container">
     <h2 class="page-title">勤怠詳細</h2>
 
+
     <form method="POST" action="{{ url('/admin/attendance/' . $attendance->id) }}">
         @csrf
         @method('PATCH')
@@ -67,9 +68,11 @@
             </tr>
         </table>
 
-        <div class="button-area">
-            <button type="submit" class="edit-button">修正</button>
-        </div>
+        @if (Auth::guard('admin')->check() || !$pendingRequest)
+            <div class="button-area">
+                <button type="submit" class="edit-button">修正</button>
+            </div>
+        @endif
     </form>
 </div>
 @endsection

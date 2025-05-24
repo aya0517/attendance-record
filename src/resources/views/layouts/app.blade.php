@@ -36,7 +36,6 @@
                 </ul>
             </nav>
 
-        {{-- 一般ユーザー --}}
         @elseif(Auth::guard('web')->check())
             <nav class="header__nav">
                 <ul class="header-nav">
