@@ -10,6 +10,7 @@ use App\Http\Controllers\RequestController;
 use App\Http\Controllers\Admin\Auth\AdminLoginController;
 use App\Http\Controllers\Admin\AdminAttendanceController;
 use App\Http\Controllers\Admin\AdminRequestController;
+use App\Http\Controllers\Admin\AdminStaffController;
 
 
 /*
@@ -81,28 +82,37 @@ Route::get('/stamp_correction_request/list', [RequestController::class, 'index']
     ->middleware('auth')
     ->name('stamp_correction.list');
 
-Route::prefix('admin')->middleware(['auth:admin'])->group(function () {
+Route::prefix('admin')->group(function () {
     Route::get('/login', [AdminLoginController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AdminLoginController::class, 'login']);
 
-    Route::get('/attendance/list', [AdminAttendanceController::class, 'showDaily'])
+    Route::middleware(['auth:admin'])->group(function () {
+        Route::get('/attendance/list', [AdminAttendanceController::class, 'showDaily'])
         ->name('admin.attendance.list');
 
-    Route::get('/attendance/{id}', [AdminAttendanceController::class, 'showDetail'])
+        Route::get('/attendance/{id}', [AdminAttendanceController::class, 'showDetail'])
         ->name('admin.attendance.detail');
 
-    Route::patch('/attendance/{id}', [AdminAttendanceController::class, 'update'])
+        Route::patch('/attendance/{id}', [AdminAttendanceController::class, 'update'])
         ->name('admin.attendance.update');
 
-    Route::get('/attendance/requests/index', [AdminRequestController::class, 'index'])
+        Route::get('/attendance/requests/index', [AdminRequestController::class, 'index'])
         ->name('admin.attendance.requests');
 
-    Route::post('/attendance/requests/approve/{id}', [AdminRequestController::class, 'approve'])
+        Route::post('/attendance/requests/approve/{id}', [AdminRequestController::class, 'approve'])
         ->name('admin.attendance.approve');
 
-    Route::get('/attendance/requests/{request}', [AdminRequestController::class, 'showApprove'])
+        Route::get('/attendance/requests/{request}', [AdminRequestController::class, 'showApprove'])
         ->middleware('auth:admin')
         ->name('admin.requests_approve');
+
+        Route::get('/staffs', [AdminStaffController::class, 'index'])->name('admin.staffs.index');
+
+        Route::get('/staffs/{id}', [AdminStaffController::class, 'showDetail'])->name('admin.staffs.detail');
+
+        Route::get('/staffs/{id}/export', [AdminStaffController::class, 'export'])
+            ->name('admin.staffs.export');
+    });
 });
 
 Route::post('/admin/logout', function () {
