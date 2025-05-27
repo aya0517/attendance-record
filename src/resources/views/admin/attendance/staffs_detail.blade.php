@@ -8,12 +8,15 @@
 <div class="staff-detail-container">
     <h2 class="page-title">{{ $staff->name }}さんの勤怠</h2>
 
+    <div class="date-navigation-container">
     <div class="month-navigation">
         <a href="{{ route('admin.staffs.detail', [$staff->id, 'month' => $currentMonth->copy()->subMonth()->format('Y-m')]) }}">&larr; 前月</a>
         <span class="current-month">{{ $currentMonth->format('Y/m') }}</span>
         <a href="{{ route('admin.staffs.detail', [$staff->id, 'month' => $currentMonth->copy()->addMonth()->format('Y-m')]) }}">翌月 &rarr;</a>
     </div>
+    </div>
 
+    <div class="attendance-table-container">
     <table class="attendance-table">
         <thead>
             <tr>
@@ -48,6 +51,7 @@
             @endforeach
         </tbody>
     </table>
+    </div>
 
     <div class="csv-button-area">
         <form method="GET" action="{{ route('admin.staffs.export', $staff->id) }}">

@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Attendance;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\Response;
 
 
 class AdminStaffController extends Controller

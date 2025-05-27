@@ -2,8 +2,7 @@
     max-width: 800px;
     margin: 80px auto;
     padding: 40px;
-    background-color: #f5f4f7;
-    border-radius: 10px;
+    border-radius: 12px;
 }
 
 .page-title {
@@ -14,33 +13,67 @@
     margin-bottom: 30px;
 }
 
+.date-navigation-container {
+    background-color: rgba(221, 160, 221, 0.5);
+    border-radius: 12px;
+    padding: 10px 20px;
+    margin-bottom: 40px;
+}
+
 .month-navigation {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    gap: 40px;
     font-weight: bold;
+    font-size: 15px;
+}
+
+.month-navigation a {
+    color: #555;
+    text-decoration: none;
+    padding: 6px 12px;
+}
+
+.current-month {
+    font-size: 16px;
+    color: #333;
+}
+
+.attendance-table-container {
+    margin-bottom: 30px;
 }
 
 .attendance-table {
     width: 100%;
     border-collapse: collapse;
-    background-color: white;
+    background-color: #fff;
     border-radius: 10px;
     overflow: hidden;
 }
 
-.attendance-table th, .attendance-table td {
+.attendance-table th,
+.attendance-table td {
     padding: 12px;
     text-align: center;
+    border-bottom: 1px solid #eee;
     font-size: 14px;
-    border-bottom: 1px solid #ddd;
 }
 
 .attendance-table th {
-    background-color: #f0f0f0;
+    background-color: rgba(221, 160, 221, 0.5);
+    color: #333;
     font-weight: bold;
+}
+
+.attendance-table tr:hover {
+    background-color: #fafafa;
+}
+
+.attendance-table a {
+    color: #333;
+    font-size: 13px;
+    font-weight: bold;
+    text-decoration: underline;
 }
 
 .csv-button-area {
@@ -50,14 +83,46 @@
 
 .csv-button {
     padding: 8px 20px;
-    background-color: black;
+    background-color: purple;
     color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 6px;
     cursor: pointer;
     font-size: 14px;
+    transition: background-color 0.2s;
 }
 
 .csv-button:hover {
-    background-color: #333;
+    background-color: plum;
+}
+
+@media screen and (max-width: 850px) {
+    .staff-detail-container {
+        padding: 20px;
+        max-width: 90%;
+    }
+
+    .page-title {
+        font-size: 20px;
+    }
+
+    .month-navigation {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .current-month {
+        font-size: 15px;
+    }
+
+    .attendance-table th,
+    .attendance-table td {
+        font-size: 13px;
+        padding: 10px;
+    }
+
+    .csv-button {
+        width: 100%;
+        margin-top: 10px;
+    }
 }
