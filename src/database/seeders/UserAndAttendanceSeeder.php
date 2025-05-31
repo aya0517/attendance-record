@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Carbon;
 use App\Models\User;
 use App\Models\Attendance;
 use Illuminate\Support\Facades\Hash;
@@ -25,10 +26,22 @@ class UserAndAttendanceSeeder extends Seeder
             'password' => Hash::make('admin1234'),
         ]);
 
-        User::factory(10)->create()->each(function ($user) {
-            Attendance::factory()->count(5)->create([
-                'user_id' => $user->id,
-            ]);
+        User::factory()->count(5)->create([
+            'is_admin' => false,
+        ])->each(function ($user) {
+            $startDate = Carbon::now()->subMonths(4)->startOfMonth();
+            $endDate = Carbon::now()->endOfMonth();
+            $date = $startDate->copy();
+
+            while ($date->lte($endDate)) {
+                if (!in_array($date->dayOfWeekIso, [6, 7])) {
+                    Attendance::factory()->create([
+                        'user_id' => $user->id,
+                        'date' => $date->format('Y-m-d'),
+                    ]);
+                }
+                $date->addDay();
+            }
         });
     }
 

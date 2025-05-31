@@ -65,10 +65,10 @@ Route::post('/attendance/punch', [AttendanceController::class, 'handlePunch'])
 // 勤怠一覧画面（ログイン済みユーザーの今月の勤怠記録）
 Route::get('/attendance/list', [AttendanceController::class, 'showList'])
     ->middleware(['auth', 'verified'])
-    ->name('attendance.list.current');
-
-Route::get('/attendance/list/{year?}/{month?}', [AttendanceController::class, 'showList'])
     ->name('attendance.list');
+
+// Route::get('/attendance/list/{year?}/{month?}', [AttendanceController::class, 'showList'])
+//     ->name('attendance.list');
 
 Route::get('/attendance/{id}', [AttendanceController::class, 'showDetail'])->name('attendance.detail');
 

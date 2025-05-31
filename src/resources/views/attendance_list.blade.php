@@ -9,11 +9,6 @@
     <h2 class="attendance-title">勤怠一覧</h2>
 
     <div class="attendance-filter">
-        @php
-            $prev = $currentMonth->copy()->subMonth();
-            $next = $currentMonth->copy()->addMonth();
-        @endphp
-
         <a href="{{ route('attendance.list', ['month' => $prevMonth]) }}" class="prev-month">← 前月</a>
         <span class="current-month">{{ $currentMonth->format('Y/m') }}</span>
         <a href="{{ route('attendance.list', ['month' => $nextMonth]) }}" class="next-month">翌月 →</a>
@@ -32,12 +27,23 @@
         </thead>
         <tbody>
             @foreach ($attendances as $attendance)
+            @php
+                $breakSeconds = $attendance->breaks->sum(function ($break) {
+                    return $break->started_at && $break->ended_at
+                        ? \Carbon\Carbon::parse($break->ended_at)->diffInSeconds(\Carbon\Carbon::parse($break->started_at))
+                        : 0;
+                });
+
+                $totalWorkSeconds = ($attendance->start_time && $attendance->end_time)
+                    ? \Carbon\Carbon::parse($attendance->end_time)->diffInSeconds(\Carbon\Carbon::parse($attendance->start_time)) - $breakSeconds
+                    : null;
+            @endphp
             <tr>
                 <td>{{ \Carbon\Carbon::parse($attendance->date)->format('m/d(D)') }}</td>
-                <td>{{ $attendance->start_time ?? '' }}</td>
-                <td>{{ $attendance->end_time ?? '' }}</td>
-                <td>{{ $attendance->break_duration ?? '' }}</td>
-                <td>{{ $attendance->total_work_time ?? '' }}</td>
+                <td>{{ $attendance->start_time ? \Carbon\Carbon::parse($attendance->start_time)->format('H:i') : '' }}</td>
+                <td>{{ $attendance->end_time ? \Carbon\Carbon::parse($attendance->end_time)->format('H:i') : '' }}</td>
+                <td>{{ gmdate('H:i', $breakSeconds) }}</td>
+                <td>{{ $totalWorkSeconds !== null ? gmdate('H:i', $totalWorkSeconds) : '' }}</td>
                 <td><a href="{{ route('attendance.detail', ['id' => $attendance->id]) }}">詳細</a></td>
             </tr>
             @endforeach

@@ -49,7 +49,7 @@ class AttendanceController extends Controller
         switch ($action) {
             case 'start':
                 if (!$attendance->start_time) {
-                    $attendance->start_time = now()->format('H:i:s');
+                    $attendance->start_time = now()->format('H:i');
                     $attendance->status = 'working';
                     $attendance->on_break = false;
                     $attendance->save();
@@ -58,7 +58,7 @@ class AttendanceController extends Controller
 
             case 'end':
                 if (!$attendance->end_time) {
-                    $attendance->end_time = now()->format('H:i:s');
+                    $attendance->end_time = now()->format('H:i');
                     $attendance->status = 'ended';
                     $attendance->on_break = false;
                     $attendance->save();
@@ -67,25 +67,25 @@ class AttendanceController extends Controller
 
             case 'break_start':
                 $attendance->on_break = true;
-                $attendance->break_started_at = now()->format('H:i:s');
+                $attendance->break_started_at = now()->format('H:i');
                 $attendance->status = 'on_break';
                 $attendance->save();
 
                 $attendance->breaks()->create([
-                    'started_at' => now()->format('H:i:s'),
+                    'started_at' => now()->format('H:i'),
                 ]);
                 return redirect()->back();
 
             case 'break_end':
                 $attendance->on_break = false;
-                $attendance->break_ended_at = now()->format('H:i:s');
+                $attendance->break_ended_at = now()->format('H:i');
                 $attendance->status = 'working';
                 $attendance->save();
 
                 $latestBreak = $attendance->breaks()->whereNull('ended_at')->latest()->first();
                 if ($latestBreak) {
                     $latestBreak->update([
-                        'ended_at' => now()->format('H:i:s'),
+                        'ended_at' => now()->format('H:i'),
                     ]);
                 }
                 return redirect()->back();
@@ -96,45 +96,51 @@ class AttendanceController extends Controller
     }
 
     public function showList(Request $request)
-    {
-        $user = Auth::user();
+{
+    $user = Auth::user();
 
-        $monthParam = $request->input('month');
+    $monthParam = $request->query('month');
 
-        $targetDate = $monthParam
+    $targetDate = $monthParam
         ? \Carbon\Carbon::createFromFormat('Y-m', $monthParam)->startOfMonth()
         : now()->startOfMonth();
 
-        $attendances = Attendance::where('user_id', $user->id)
-            ->whereMonth('date', now()->month)
-            ->orderBy('date')
-            ->get();
+    $attendances = Attendance::where('user_id', $user->id)
+        ->whereYear('date', $targetDate->year)
+        ->whereMonth('date', $targetDate->month)
+        ->orderBy('date')
+        ->with('breaks')
+        ->get();
 
-        foreach ($attendances as $attendance) {
-            $totalBreakSeconds = $attendance->breaks->sum(function ($break) {
-                if ($break->started_at && $break->ended_at) {
-                    return \Carbon\Carbon::parse($break->ended_at)->diffInSeconds(\Carbon\Carbon::parse($break->started_at));
-                }
-                return 0;
-            });
-
-            $attendance->break_duration = gmdate('H:i', $totalBreakSeconds);
-
-            if ($attendance->start_time && $attendance->end_time) {
-                $totalWorkSeconds = \Carbon\Carbon::parse($attendance->end_time)->diffInSeconds(\Carbon\Carbon::parse($attendance->start_time)) - $totalBreakSeconds;
-                $attendance->total_work_time = gmdate('H:i', $totalWorkSeconds);
-            } else {
-                $attendance->total_work_time = '';
+    foreach ($attendances as $attendance) {
+        $totalBreakSeconds = $attendance->breaks->sum(function ($break) {
+            if ($break->started_at && $break->ended_at) {
+                return \Carbon\Carbon::parse($break->ended_at)
+                    ->diffInSeconds(\Carbon\Carbon::parse($break->started_at));
             }
-        }
+            return 0;
+        });
 
-        return view('attendance_list', [
+        $attendance->break_duration = gmdate('H:i', $totalBreakSeconds);
+
+        if ($attendance->start_time && $attendance->end_time) {
+            $totalWorkSeconds = \Carbon\Carbon::parse($attendance->end_time)
+                ->diffInSeconds(\Carbon\Carbon::parse($attendance->start_time)) - $totalBreakSeconds;
+
+            $attendance->total_work_time = gmdate('H:i', $totalWorkSeconds);
+        } else {
+            $attendance->total_work_time = '';
+        }
+    }
+
+    return view('attendance_list', [
         'attendances' => $attendances,
         'currentMonth' => $targetDate,
         'prevMonth' => $targetDate->copy()->subMonth()->format('Y-m'),
         'nextMonth' => $targetDate->copy()->addMonth()->format('Y-m'),
-        ]);
-    }
+    ]);
+}
+
 
     public function showDetail($id)
     {
