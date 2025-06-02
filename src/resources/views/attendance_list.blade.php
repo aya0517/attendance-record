@@ -9,9 +9,9 @@
     <h2 class="attendance-title">勤怠一覧</h2>
 
     <div class="attendance-filter">
-        <a href="{{ route('attendance.list', ['month' => $prevMonth]) }}" class="prev-month">← 前月</a>
+        <a href="{{ url('/attendance/list') . '?month=' . $prevMonth }}" class="prev-month">← 前月</a>
         <span class="current-month">{{ $currentMonth->format('Y/m') }}</span>
-        <a href="{{ route('attendance.list', ['month' => $nextMonth]) }}" class="next-month">翌月 →</a>
+        <a href="{{ url('/attendance/list') . '?month=' . $nextMonth }}" class="next-month">翌月 →</a>
     </div>
 
     <table class="attendance-table">

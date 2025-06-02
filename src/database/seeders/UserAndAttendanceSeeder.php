@@ -26,7 +26,29 @@ class UserAndAttendanceSeeder extends Seeder
             'password' => Hash::make('admin1234'),
         ]);
 
-        User::factory()->count(5)->create([
+        $user = User::create([
+        'name' => '一般ユーザー',
+        'email' => 'user1@example.com',
+        'email_verified_at' => now(),
+        'password' => Hash::make('user1234'),
+        'is_admin' => false,
+    ]);
+
+    $startDate = Carbon::now()->subMonths(4)->startOfMonth();
+    $endDate = Carbon::now()->endOfMonth();
+    $date = $startDate->copy();
+
+    while ($date->lte($endDate)) {
+        if (!in_array($date->dayOfWeekIso, [6, 7])) {
+            Attendance::factory()->create([
+                'user_id' => $user->id,
+                'date' => $date->format('Y-m-d'),
+            ]);
+        }
+        $date->addDay();
+    }
+
+        User::factory()->count(4)->create([
             'is_admin' => false,
         ])->each(function ($user) {
             $startDate = Carbon::now()->subMonths(4)->startOfMonth();

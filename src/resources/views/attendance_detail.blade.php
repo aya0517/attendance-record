@@ -28,34 +28,26 @@
             <tr>
                 <th>出勤・退勤</th>
                 <td>
-                    <input type="time" name="start_time" value="{{ old('start_time', \Carbon\Carbon::parse($attendance->start_time)->format('H:i')) }}" class="time-box" {{ $pendingRequest ? 'readonly' : '' }}>
+                    <input type="time" name="start_time" value="{{ old('start_time', optional($attendance->start_time ? \Carbon\Carbon::parse($attendance->start_time) : null)->format('H:i')) }}" class="time-box" {{ $pendingRequest ? 'readonly' : '' }}>
                     <span class="time-separator">〜</span>
-                    <input type="time" name="end_time" value="{{ old('end_time', \Carbon\Carbon::parse($attendance->end_time)->format('H:i')) }}" class="time-box" {{ $pendingRequest ? 'readonly' : '' }}>
-
-                    @if ($errors->has('start_time'))
-                        <p class="error-text">{{ $errors->first('start_time') }}</p>
-                    @endif
-                    @if ($errors->has('end_time'))
-                        <p class="error-text">{{ $errors->first('end_time') }}</p>
-                    @endif
+                    <input type="time" name="end_time" value="{{ old('end_time', optional($attendance->end_time ? \Carbon\Carbon::parse($attendance->end_time) : null)->format('H:i')) }}" class="time-box" {{ $pendingRequest ? 'readonly' : '' }}>
                 </td>
             </tr>
 
+            @for ($i = 0; $i < 2; $i++)
             <tr>
-                <th>休憩</th>
+                <th>休憩{{ $i + 1 }}</th>
                 <td>
-                    <input type="time" name="break_start" value="{{ old('break_start', optional($attendance->breaks->first())->started_at ? \Carbon\Carbon::parse($attendance->breaks->first()->started_at)->format('H:i') : '') }}" class="time-box" {{ $pendingRequest ? 'readonly' : '' }}>
+                    <input type="time" name="breaks[{{ $i }}][started_at]"
+                    value="{{ old("breaks.$i.started_at", isset($attendance->breaks[$i]) && $attendance->breaks[$i]->started_at ? \Carbon\Carbon::parse($attendance->breaks[$i]->started_at)->format('H:i') : '') }}"
+                    class="time-box" {{ $pendingRequest ? 'readonly' : '' }}>
                     <span class="time-separator">〜</span>
-                    <input type="time" name="break_end" value="{{ old('break_end', optional($attendance->breaks->first())->ended_at ? \Carbon\Carbon::parse($attendance->breaks->first()->ended_at)->format('H:i') : '') }}" class="time-box" {{ $pendingRequest ? 'readonly' : '' }}>
-
-                    @if ($errors->has('break_start'))
-                        <p class="error-text">{{ $errors->first('break_start') }}</p>
-                    @endif
-                    @if ($errors->has('break_end'))
-                        <p class="error-text">{{ $errors->first('break_end') }}</p>
-                    @endif
+                    <input type="time" name="breaks[{{ $i }}][ended_at]"
+                    value="{{ old("breaks.$i.ended_at", isset($attendance->breaks[$i]) && $attendance->breaks[$i]->ended_at ? \Carbon\Carbon::parse($attendance->breaks[$i]->ended_at)->format('H:i') : '') }}"
+                    class="time-box" {{ $pendingRequest ? 'readonly' : '' }}>
                 </td>
             </tr>
+            @endfor
 
             <tr>
                 <th>備考</th>
@@ -77,7 +69,6 @@
                 ※承認待ちのため修正はできません。
             </p>
         @endif
-
     </form>
 </div>
 @endsection
