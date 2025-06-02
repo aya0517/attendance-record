@@ -8,6 +8,8 @@
 <div class="attendance-detail-container">
     <h2 class="page-title">勤怠詳細</h2>
 
+    <p style="color:red;">pendingRequest: {{ var_export($pendingRequest, true) }}</p>
+
     <form method="POST" action="{{ route('stamp_correction.store', $attendance->id) }}">
         @csrf
 

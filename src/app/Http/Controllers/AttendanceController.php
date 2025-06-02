@@ -144,6 +144,8 @@ class AttendanceController extends Controller
 
     public function showDetail($id)
     {
+        $pendingRequest = false;
+
         $attendance = Attendance::with('breaks')->findOrFail($id);
 
         $totalBreakSeconds = $attendance->breaks->sum(function ($break) {
