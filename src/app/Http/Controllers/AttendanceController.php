@@ -67,28 +67,28 @@ class AttendanceController extends Controller
 
             case 'break_start':
                 $attendance->on_break = true;
-                $attendance->break_started_at = now()->format('H:i');
+                $attendance->break_started_at = now();
                 $attendance->status = 'on_break';
                 $attendance->save();
 
                 $attendance->breaks()->create([
-                    'started_at' => now()->format('H:i'),
+                    'started_at' => now(),
                 ]);
-                return redirect()->back();
+                return redirect('/attendance');
 
             case 'break_end':
                 $attendance->on_break = false;
-                $attendance->break_ended_at = now()->format('H:i');
+                $attendance->break_ended_at = now();
                 $attendance->status = 'working';
                 $attendance->save();
 
                 $latestBreak = $attendance->breaks()->whereNull('ended_at')->latest()->first();
                 if ($latestBreak) {
                     $latestBreak->update([
-                        'ended_at' => now()->format('H:i'),
+                        'ended_at' => now(),
                     ]);
                 }
-                return redirect()->back();
+                return redirect('/attendance');
         }
 
         $attendance->save();

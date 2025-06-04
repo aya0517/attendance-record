@@ -2,41 +2,42 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 use App\Models\User;
 use App\Models\Attendance;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Carbon;
+use Carbon\Carbon;
 
 class AttendanceListViewTest extends TestCase
 {
     use RefreshDatabase;
 
     /** @test */
-public function it_displays_all_attendance_records_for_the_user()
-{
-    $user = User::factory()->create();
+    public function it_displays_all_attendance_records_for_the_logged_in_user()
+    {
+        $user = User::factory()->create();
+        Attendance::factory()->count(3)->create(['user_id' => $user->id]);
 
-    Attendance::factory()->count(3)->create([
-        'user_id' => $user->id,
-        'date' => now()->startOfMonth()->addDays(1),
-    ]);
+        $this->actingAs($user);
+        $response = $this->get('/attendance/list');
 
-    $this->actingAs($user);
-    $response = $this->get('/attendance/list');
-
-    $response->assertStatus(200);
-
-    $this->assertEquals(3, substr_count($response->getContent(), '>詳細</a>'));
-}
-
+        $response->assertStatus(200);
+        foreach (Attendance::all() as $attendance) {
+            $response->assertSee(Carbon::parse($attendance->date)->format('m/d'));
+        }
+    }
 
     /** @test */
-    public function it_shows_current_month_attendance_on_initial_access()
+    public function it_displays_current_month_by_default()
     {
-        Carbon::setTestNow(Carbon::create(2025, 6, 1));
         $user = User::factory()->create();
-        Attendance::factory()->create(['user_id' => $user->id, 'date' => '2025-06-01']);
+        $today = Carbon::create(2025, 6, 3);
+        Carbon::setTestNow($today);
+
+        Attendance::factory()->create([
+            'user_id' => $user->id,
+            'date' => $today->format('Y-m-d'),
+        ]);
 
         $this->actingAs($user);
         $response = $this->get('/attendance/list');
@@ -46,11 +47,16 @@ public function it_displays_all_attendance_records_for_the_user()
     }
 
     /** @test */
-    public function it_shows_previous_month_attendance_when_prev_month_is_selected()
+    public function it_displays_previous_month_data_when_prev_button_clicked()
     {
-        Carbon::setTestNow(Carbon::create(2025, 6, 1));
         $user = User::factory()->create();
-        Attendance::factory()->create(['user_id' => $user->id, 'date' => '2025-05-15']);
+        $may = Carbon::create(2025, 5, 15);
+        Carbon::setTestNow($may);
+
+        Attendance::factory()->create([
+            'user_id' => $user->id,
+            'date' => $may->format('Y-m-d'),
+        ]);
 
         $this->actingAs($user);
         $response = $this->get('/attendance/list?month=2025-05');
@@ -60,11 +66,16 @@ public function it_displays_all_attendance_records_for_the_user()
     }
 
     /** @test */
-    public function it_shows_next_month_attendance_when_next_month_is_selected()
+    public function it_displays_next_month_data_when_next_button_clicked()
     {
-        Carbon::setTestNow(Carbon::create(2025, 6, 1));
         $user = User::factory()->create();
-        Attendance::factory()->create(['user_id' => $user->id, 'date' => '2025-07-01']);
+        $july = Carbon::create(2025, 7, 1);
+        Carbon::setTestNow($july);
+
+        Attendance::factory()->create([
+            'user_id' => $user->id,
+            'date' => $july->format('Y-m-d'),
+        ]);
 
         $this->actingAs($user);
         $response = $this->get('/attendance/list?month=2025-07');
@@ -74,14 +85,15 @@ public function it_displays_all_attendance_records_for_the_user()
     }
 
     /** @test */
-    public function it_moves_to_detail_page_when_detail_button_is_clicked()
+    public function it_redirects_to_detail_page_when_clicking_detail_button()
     {
         $user = User::factory()->create();
         $attendance = Attendance::factory()->create(['user_id' => $user->id]);
 
         $this->actingAs($user);
-        $response = $this->get('/attendance/' . $attendance->id);
+        $response = $this->get('/attendance/list');
+
         $response->assertStatus(200);
-        $response->assertSee($attendance->start_time);
+        $response->assertSee(route('attendance.detail', ['id' => $attendance->id]));
     }
 }

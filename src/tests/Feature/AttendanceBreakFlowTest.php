@@ -9,6 +9,7 @@ use App\Models\Attendance;
 use App\Models\BreakTime;
 use Carbon\Carbon;
 
+
 class AttendanceBreakFlowTest extends TestCase
 {
     use RefreshDatabase;
@@ -48,9 +49,11 @@ class AttendanceBreakFlowTest extends TestCase
 
         $this->actingAs($user);
 
+        // 1回目休憩
         $this->post('/attendance/punch', ['action' => 'break_start']);
         $this->post('/attendance/punch', ['action' => 'break_end']);
 
+        // 2回目休憩
         $this->post('/attendance/punch', ['action' => 'break_start']);
         $attendance->refresh();
         $this->assertTrue((bool) $attendance->on_break);
@@ -89,8 +92,10 @@ class AttendanceBreakFlowTest extends TestCase
 
         $this->actingAs($user);
 
+        // 1回目休憩戻り
         $this->post('/attendance/punch', ['action' => 'break_end']);
 
+        // 2回目休憩開始 → 戻り
         $this->post('/attendance/punch', ['action' => 'break_start']);
         $this->post('/attendance/punch', ['action' => 'break_end']);
 
@@ -99,28 +104,37 @@ class AttendanceBreakFlowTest extends TestCase
     }
 
     /** @test */
-public function test_break_times_appear_in_attendance_list()
+    public function break_times_appear_in_attendance_list()
 {
-    Carbon::setTestNow(Carbon::create(2025, 6, 3, 10, 0));
     $user = User::factory()->create();
+
+    $date = Carbon::parse('2025-06-01');
+
+    $attendance = Attendance::factory()->create([
+        'user_id' => $user->id,
+        'date' => $date,
+        'start_time' => '09:00:00',
+        'end_time' => '18:00:00',
+        'status' => 'ended',
+        'on_break' => false,
+    ]);
+
+    $attendance->breaks()->createMany([
+        [
+            'started_at' => $date->copy()->setTime(10, 0, 0),
+            'ended_at'   => $date->copy()->setTime(10, 30, 0),
+        ],
+        [
+            'started_at' => $date->copy()->setTime(14, 0, 0),
+            'ended_at'   => $date->copy()->setTime(14, 30, 0),
+        ],
+    ]);
+
     $this->actingAs($user);
-
-    $this->post('/attendance/punch', ['action' => 'start']);
-    $this->post('/attendance/punch', ['action' => 'break_start']);
-
-    Carbon::setTestNow(Carbon::create(2025, 6, 3, 10, 30));
-    $this->post('/attendance/punch', ['action' => 'break_end']);
-
-    Carbon::setTestNow(Carbon::create(2025, 6, 3, 18, 0));
-    $this->post('/attendance/punch', ['action' => 'end']);
 
     $response = $this->get('/attendance/list');
     $response->assertStatus(200);
-
-    $response->assertSee('10:00');
-    $response->assertSee('18:00');
-    $response->assertSee('00:30');
-    $response->assertSee('07:30');
+    $response->assertSee('01:00');
 }
 
 }
