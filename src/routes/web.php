@@ -67,6 +67,7 @@ Route::get('/attendance/list', [AttendanceController::class, 'showList'])
     ->middleware(['auth', 'verified'])
     ->name('attendance.list');
 
+
 Route::get('/attendance/{id}', [AttendanceController::class, 'showDetail'])->name('attendance.detail');
 
 // 修正申請保存（POST）
