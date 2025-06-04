@@ -106,6 +106,7 @@ class AttendanceController extends Controller
         : now()->startOfMonth();
 
     $attendances = Attendance::where('user_id', $user->id)
+        ->with('breaks')
         ->whereYear('date', $targetDate->year)
         ->whereMonth('date', $targetDate->month)
         ->orderBy('date')

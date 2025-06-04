@@ -121,12 +121,14 @@ class AttendanceBreakFlowTest extends TestCase
 
     $attendance->breaks()->createMany([
         [
-            'started_at' => $date->copy()->setTime(10, 0, 0),
-            'ended_at'   => $date->copy()->setTime(10, 30, 0),
+            'attendance_id' => $attendance->id,
+            'started_at' => $date->copy()->setTime(10, 0, 0)->format('Y-m-d H:i:s'),
+            'ended_at'   => $date->copy()->setTime(10, 30, 0)->format('Y-m-d H:i:s'),
         ],
         [
-            'started_at' => $date->copy()->setTime(14, 0, 0),
-            'ended_at'   => $date->copy()->setTime(14, 30, 0),
+            'attendance_id' => $attendance->id,
+            'started_at' => $date->copy()->setTime(14, 0, 0)->format('Y-m-d H:i:s'),
+            'ended_at'   => $date->copy()->setTime(14, 30, 0)->format('Y-m-d H:i:s'),
         ],
     ]);
 

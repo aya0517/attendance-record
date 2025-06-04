@@ -9,7 +9,7 @@ use App\Models\Attendance;
 use App\Models\BreakTime;
 use Carbon\Carbon;
 
-class AttendanceDetailInfoTest extends TestCase
+class AttendanceDetailViewTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -76,16 +76,14 @@ class AttendanceDetailInfoTest extends TestCase
 
         $attendance->breaks()->createMany([
             [
-                'started_at' => '2025-06-03 13:00:00',
-                'ended_at' => '2025-06-03 13:30:00',
+                'started_at' => Carbon::parse('2025-06-03 13:00:00'),
+                'ended_at' => Carbon::parse('2025-06-03 13:30:00'),
             ],
             [
-                'started_at' => '2025-06-03 15:00:00',
-                'ended_at' => '2025-06-03 15:15:00',
+                'started_at' => Carbon::parse('2025-06-03 15:00:00'),
+                'ended_at' => Carbon::parse('2025-06-03 15:15:00'),
             ]
         ]);
-
-        dd($attendance->breaks()->get());
 
         $this->actingAs($user);
         $response = $this->get("/attendance/{$attendance->id}");
