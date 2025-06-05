@@ -36,23 +36,25 @@ class AttendanceRequest extends FormRequest
     }
 
     public function withValidator($validator)
-    {
-        $validator->after(function ($validator) {
-            $start = strtotime($this->input('start_time'));
-            $end = strtotime($this->input('end_time'));
-            $breakStart = strtotime($this->input('break_start'));
-            $breakEnd = strtotime($this->input('break_end'));
+{
+    $validator->after(function ($validator) {
+        $start = strtotime($this->input('start_time'));
+        $end = strtotime($this->input('end_time'));
+        $breakStart = strtotime($this->input('break_start'));
+        $breakEnd = strtotime($this->input('break_end'));
 
-            if ($start !== false && $end !== false && $start >= $end) {
-                $validator->errors()->add('start_time', '出勤時間もしくは退勤時間が不適切な値です');
-            }
+        if ($start !== false && $end !== false && $start >= $end) {
+            $validator->errors()->add('start_time', '出勤時間もしくは退勤時間が不適切な値です');
+        }
 
-            if (
-                ($breakStart < $start || $breakStart > $end) ||
-                ($breakEnd < $start || $breakEnd > $end)
-            ) {
-                $validator->errors()->add('break_start', '休憩時間が勤務時間外です');
-            }
-        });
-    }
+        if ($breakStart !== false && ($breakStart < $start || $breakStart > $end)) {
+            $validator->errors()->add('break_start', '休憩開始時間が勤務時間外です');
+        }
+
+        if ($breakEnd !== false && ($breakEnd < $start || $breakEnd > $end)) {
+            $validator->errors()->add('break_end', '休憩終了時間が勤務時間外です');
+        }
+    });
+}
+
 }
