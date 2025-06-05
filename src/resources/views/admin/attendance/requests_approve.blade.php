@@ -52,7 +52,7 @@
             <th>備考</th>
             <td>
                 <div class="note-area" style="background-color: #f5f5f5; border: 1px solid #ddd;">
-                    {{ $attendance->note ?? '（なし）' }}
+                    {{$pendingRequest->note ?? '（なし）' }}
                 </div>
             </td>
         </tr>
