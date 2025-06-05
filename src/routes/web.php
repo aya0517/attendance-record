@@ -67,6 +67,9 @@ Route::get('/attendance/list', [AttendanceController::class, 'showList'])
     ->middleware(['auth', 'verified'])
     ->name('attendance.list');
 
+Route::patch('/attendance/{id}', [AttendanceController::class, 'update'])
+    ->middleware('auth')
+    ->name('attendance.update');
 
 Route::get('/attendance/{id}', [AttendanceController::class, 'showDetail'])->name('attendance.detail');
 

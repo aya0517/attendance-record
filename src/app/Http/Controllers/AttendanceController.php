@@ -172,4 +172,24 @@ class AttendanceController extends Controller
         return view('attendance_detail', compact('attendance', 'breakDuration', 'totalWorkTime', 'pendingRequest'));
     }
 
+    public function update(AttendanceRequest $request, $id)
+{
+    $attendance = Attendance::findOrFail($id);
+
+    StampCorrectionRequest::create([
+        'attendance_id' => $attendance->id,
+        'user_id' => auth()->id(),
+        'date' => $attendance->date,
+        'start_time' => $request->input('start_time'),
+        'end_time' => $request->input('end_time'),
+        'break_start' => $request->input('break_start'),
+        'break_end' => $request->input('break_end'),
+        'note' => $request->input('note'),
+        'status' => 'pending',
+    ]);
+
+    return redirect()->route('attendance.detail', $attendance->id);
+}
+
+
 }

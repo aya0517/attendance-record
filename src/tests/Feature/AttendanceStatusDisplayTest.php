@@ -48,7 +48,7 @@ class AttendanceStatusDisplayTest extends TestCase
 
         Attendance::factory()->create([
             'user_id' => $user->id,
-            'date' => now()->toDateString(),  // ← 今日
+            'date' => now()->toDateString(),
             'status' => 'working',
             'on_break' => true,
         ]);
