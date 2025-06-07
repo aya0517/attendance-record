@@ -110,28 +110,27 @@ class AttendanceController extends Controller
         ->whereYear('date', $targetDate->year)
         ->whereMonth('date', $targetDate->month)
         ->orderBy('date')
-        ->with('breaks')
         ->get();
 
     foreach ($attendances as $attendance) {
-    $totalBreakSeconds = $attendance->breaks->sum(function ($break) {
-        return $break->started_at && $break->ended_at
-            ? \Carbon\Carbon::parse($break->ended_at)
-                ->diffInSeconds(\Carbon\Carbon::parse($break->started_at))
-            : 0;
-    });
+        $totalBreakSeconds = $attendance->breaks->sum(function ($break) {
+            if ($break->started_at && $break->ended_at) {
+                return $break->ended_at->diffInSeconds($break->started_at);
+            }
+            return 0;
+        });
 
-    $attendance->break_duration = gmdate('H:i', $totalBreakSeconds);
+        $attendance->break_duration = gmdate('H:i', $totalBreakSeconds);
 
-    if ($attendance->start_time && $attendance->end_time) {
-        $totalWorkSeconds = \Carbon\Carbon::parse($attendance->end_time)
-            ->diffInSeconds(\Carbon\Carbon::parse($attendance->start_time)) - $totalBreakSeconds;
+        if ($attendance->start_time && $attendance->end_time) {
+            $totalWorkSeconds = \Carbon\Carbon::parse($attendance->end_time)
+                ->diffInSeconds(\Carbon\Carbon::parse($attendance->start_time)) - $totalBreakSeconds;
 
-        $attendance->total_work_time = gmdate('H:i', $totalWorkSeconds);
-    } else {
-        $attendance->total_work_time = '';
+            $attendance->total_work_time = gmdate('H:i', $totalWorkSeconds);
+        } else {
+            $attendance->total_work_time = '';
+        }
     }
-}
 
     return view('attendance_list', [
         'attendances' => $attendances,
@@ -142,37 +141,36 @@ class AttendanceController extends Controller
 }
 
 
-    public function showDetail($id)
-    {
-        $pendingRequest = false;
+   public function showDetail($id)
+{
+    $pendingRequest = false;
 
-        $attendance = Attendance::with('breaks')->findOrFail($id);
+    $attendance = Attendance::with('breaks')->findOrFail($id);
 
-        $totalBreakSeconds = $attendance->breaks->sum(function ($break) {
-    return $break->started_at && $break->ended_at
-        ? \Carbon\Carbon::parse($break->ended_at)
-            ->diffInSeconds(\Carbon\Carbon::parse($break->started_at))
-        : 0;
-});
+    $totalBreakSeconds = $attendance->breaks->sum(function ($break) {
+        if ($break->started_at && $break->ended_at) {
+            return $break->ended_at->diffInSeconds($break->started_at);
+        }
+        return 0;
+    });
 
-$breakDuration = gmdate('H:i', $totalBreakSeconds);
+    $breakDuration = gmdate('H:i', $totalBreakSeconds);
 
-if ($attendance->start_time && $attendance->end_time) {
-    $totalWorkSeconds = \Carbon\Carbon::parse($attendance->end_time)
-        ->diffInSeconds(\Carbon\Carbon::parse($attendance->start_time)) - $totalBreakSeconds;
+    if ($attendance->start_time && $attendance->end_time) {
+        $totalWorkSeconds = \Carbon\Carbon::parse($attendance->end_time)
+            ->diffInSeconds(\Carbon\Carbon::parse($attendance->start_time)) - $totalBreakSeconds;
 
-    $totalWorkTime = gmdate('H:i', $totalWorkSeconds);
-} else {
-    $totalWorkTime = '';
-}
-
-
-        $pendingRequest = StampCorrectionRequest::where('attendance_id', $attendance->id)
-            ->where('status', 'pending')
-            ->exists();
-
-        return view('attendance_detail', compact('attendance', 'breakDuration', 'totalWorkTime', 'pendingRequest'));
+        $totalWorkTime = gmdate('H:i', $totalWorkSeconds);
+    } else {
+        $totalWorkTime = '';
     }
+
+    $pendingRequest = StampCorrectionRequest::where('attendance_id', $attendance->id)
+        ->where('status', 'pending')
+        ->exists();
+
+    return view('attendance_detail', compact('attendance', 'breakDuration', 'totalWorkTime', 'pendingRequest'));
+}
 
     public function update(AttendanceRequest $request, $id)
 {
