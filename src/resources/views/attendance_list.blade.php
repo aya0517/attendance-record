@@ -30,7 +30,7 @@
             @php
                 $breakSeconds = $attendance->breaks->sum(function ($break) {
                     return $break->started_at && $break->ended_at
-                        ? \Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $break->ended_at)
+                        ? \Carbon\Carbon::parse($break->ended_at)
                             ->diffInSeconds(\Carbon\Carbon::createFromFormat('Y-m-d H:i:s', $break->started_at))
                         : 0;
                 });
