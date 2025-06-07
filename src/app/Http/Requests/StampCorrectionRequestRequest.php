@@ -18,7 +18,7 @@ class StampCorrectionRequestRequest extends FormRequest
             'end_time' => ['required', 'date_format:H:i'],
             'breaks.*.started_at' => ['nullable', 'date_format:H:i'],
             'breaks.*.ended_at' => ['nullable', 'date_format:H:i'],
-            'note' => ['nullable', 'string'],
+            'note' => ['required', 'string'],
         ];
     }
 
@@ -41,27 +41,29 @@ class StampCorrectionRequestRequest extends FormRequest
             $start = strtotime($this->input('start_time'));
             $end = strtotime($this->input('end_time'));
 
-            $hasInvalidTime = false;
-
             if ($start !== false && $end !== false && $start >= $end) {
-                $hasInvalidTime = true;
+                $validator->errors()->add('start_time', '出勤時間は退勤時間より前にしてください。');
             }
 
             foreach ($this->input('breaks', []) as $i => $break) {
-                $breakStart = isset($break['started_at']) ? strtotime   ($break['started_at']) : false;
+                $breakStart = isset($break['started_at']) ? strtotime($break['started_at']) : false;
                 $breakEnd = isset($break['ended_at']) ? strtotime($break['ended_at']) : false;
 
-                if ($breakStart !== false && ($breakStart > $end)) {
-                    $hasInvalidTime = true;
+                if ($breakStart !== false && $start !== false && $end !== false) {
+                    if ($breakStart < $start || $breakStart > $end) {
+                        $validator->errors()->add("breaks.$i.started_at", '休憩開始時間は出勤時間以降、退勤時間以前に設定してください。');
+                    }
                 }
 
-                if ($breakEnd !== false && ($breakEnd > $end)) {
-                    $hasInvalidTime = true;
+                if ($breakEnd !== false && $start !== false && $end !== false) {
+                    if ($breakEnd < $start || $breakEnd > $end) {
+                        $validator->errors()->add("breaks.$i.ended_at", '休憩終了時間は出勤時間以降、退勤時間以前に設定してください。');
+                    }
                 }
-            }
 
-            if ($hasInvalidTime) {
-                $validator->errors()->add('start_time', '出勤時間もしくは退勤時間が不適切な値です');
+                if ($breakStart !== false && $breakEnd !== false &&     $breakStart >= $breakEnd) {
+                    $validator->errors()->add("breaks.$i.started_at", '休憩開始時間は休憩終了時間より前にしてください。');
+                }
             }
 
             if (trim($this->input('note', '')) === '') {

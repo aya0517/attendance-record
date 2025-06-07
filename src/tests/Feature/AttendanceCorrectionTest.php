@@ -17,10 +17,10 @@ class AttendanceCorrectionTest extends TestCase
     {
         $user = User::factory()->create();
         $attendance = Attendance::factory()->create();
-StampCorrectionRequest::factory()->create([
-    'attendance_id' => $attendance->id,
-    'status' => 'approved',
-]);
+        StampCorrectionRequest::factory()->create([
+        'attendance_id' => $attendance->id,
+        'status' => 'approved',
+        ]);
 
         $this->actingAs($user);
 

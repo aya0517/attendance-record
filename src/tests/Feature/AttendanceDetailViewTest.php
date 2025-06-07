@@ -76,12 +76,12 @@ class AttendanceDetailViewTest extends TestCase
 
         $attendance->breaks()->createMany([
             [
-                'started_at' => Carbon::parse('2025-06-03 13:00:00'),
-                'ended_at' => Carbon::parse('2025-06-03 13:30:00'),
+                'started_at' => ('2025-06-03 13:00:00'),
+                'ended_at' => ('2025-06-03 13:30:00'),
             ],
             [
-                'started_at' => Carbon::parse('2025-06-03 15:00:00'),
-                'ended_at' => Carbon::parse('2025-06-03 15:15:00'),
+                'started_at' => ('2025-06-03 15:00:00'),
+                'ended_at' => ('2025-06-03 15:15:00'),
             ]
         ]);
 

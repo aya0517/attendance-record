@@ -29,11 +29,11 @@ Route::post('/logout', [LoginController::class, 'logout'])->middleware('auth')->
 Route::get('/email/verify', fn () => view('auth.verify-email'))->middleware('auth')->name('verification.notice');
 Route::get('/email/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
     $request->fulfill();
-    return redirect('/attendance')->with('success', 'メール認証が完了しました。');
+    return redirect('/attendance');
 })->middleware(['auth', 'signed'])->name('verification.verify');
 Route::post('/email/verification-notification', function () {
     request()->user()->sendEmailVerificationNotification();
-    return back()->with('message', '確認メールを再送信しました。');
+    return back();
 })->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 // 勤怠打刻・一覧・詳細
