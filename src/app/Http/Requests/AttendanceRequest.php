@@ -20,7 +20,7 @@ class AttendanceRequest extends FormRequest
             'end_time' => ['required', 'date_format:H:i'],
             'break_start' => ['nullable', 'date_format:H:i'],
             'break_end' => ['nullable', 'date_format:H:i'],
-            'note' => ['required', 'string'],
+            'note' => ['required'],
         ];
     }
 
@@ -62,10 +62,6 @@ class AttendanceRequest extends FormRequest
 
             if ($breakStart !== false && $breakEnd !== false && $breakStart >= $breakEnd) {
                 $validator->errors()->add('break_start', '出勤時間または退勤時間が不適切な値です');
-            }
-
-            if (trim($this->input('note', '')) === '') {
-                $validator->errors()->add('note', '備考を記入してください');
             }
         });
     }

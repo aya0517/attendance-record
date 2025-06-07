@@ -43,6 +43,8 @@
     php artisan migrate
     ```
 
+    php artisan db:seed
+
 ## 使用技術
 
 - **フレームワーク**: Laravel
