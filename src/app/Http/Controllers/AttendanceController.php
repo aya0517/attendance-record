@@ -141,7 +141,7 @@ class AttendanceController extends Controller
 }
 
 
-   public function showDetail($id)
+    public function showDetail($id)
 {
     $pendingRequest = false;
 

@@ -3,10 +3,8 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Validation\ValidationException;
 
-class AttendanceRequest extends FormRequest
+class StampCorrectionRequestRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -18,9 +16,9 @@ class AttendanceRequest extends FormRequest
         return [
             'start_time' => ['required', 'date_format:H:i'],
             'end_time' => ['required', 'date_format:H:i'],
-            'break_start' => ['required', 'date_format:H:i'],
-            'break_end' => ['required', 'date_format:H:i'],
-            'note' => ['required', 'string'],
+            'breaks.*.started_at' => ['nullable', 'date_format:H:i'],
+            'breaks.*.ended_at' => ['nullable', 'date_format:H:i'],
+            'note' => ['nullable', 'string'],
         ];
     }
 
@@ -29,9 +27,11 @@ class AttendanceRequest extends FormRequest
         return [
             'start_time.required' => '出勤時間は必須です。',
             'end_time.required' => '退勤時間は必須です。',
-            'break_start.required' => '休憩開始時間は必須です。',
-            'break_end.required' => '休憩終了時間は必須です。',
-            'note.required' => '備考を記入してください',
+            'start_time.date_format' => '出勤時間は HH:MM 形式で入力してください。',
+            'end_time.date_format' => '退勤時間は HH:MM 形式で入力してください。',
+            'breaks.*.started_at.date_format' => '休憩開始時間は HH:MM 形式で入力してください。',
+            'breaks.*.ended_at.date_format' => '休憩終了時間は HH:MM 形式で入力してください。',
+            'note.string' => '備考は文字列で入力してください。',
         ];
     }
 
@@ -47,15 +47,17 @@ class AttendanceRequest extends FormRequest
             $hasInvalidTime = true;
         }
 
-        $breakStart = strtotime($this->input('break_start'));
-        $breakEnd = strtotime($this->input('break_end'));
+        foreach ($this->input('breaks', []) as $i => $break) {
+            $breakStart = isset($break['started_at']) ? strtotime($break['started_at']) : false;
+            $breakEnd = isset($break['ended_at']) ? strtotime($break['ended_at']) : false;
 
-        if ($breakStart !== false && ($breakStart < $start || $breakStart > $end)) {
-            $hasInvalidTime = true;
-        }
+            if ($breakStart !== false && ($breakStart > $end)) {
+                $hasInvalidTime = true;
+            }
 
-        if ($breakEnd !== false && ($breakEnd < $start || $breakEnd > $end)) {
-            $hasInvalidTime = true;
+            if ($breakEnd !== false && ($breakEnd > $end)) {
+                $hasInvalidTime = true;
+            }
         }
 
         if ($hasInvalidTime) {
@@ -67,6 +69,5 @@ class AttendanceRequest extends FormRequest
         }
     });
 }
-
 
 }

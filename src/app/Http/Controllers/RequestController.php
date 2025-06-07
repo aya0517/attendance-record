@@ -7,29 +7,28 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Attendance;
 use App\Http\Requests\AttendanceRequest;
-
+use App\Http\Requests\StampCorrectionRequestRequest;
 
 class RequestController extends Controller
 {
-    public function store(AttendanceRequest $request, Attendance $attendance)
-    {
-        \Log::info('Request method', ['method' => request()->method()]);
+    public function store(StampCorrectionRequestRequest $request, Attendance $attendance)
+{
+    \Log::info('Request method', ['method' => request()->method()]);
 
-        StampCorrectionRequest::create([
-            'user_id' => Auth::id(),
-            'attendance_id' => $attendance->id,
-            'date' => $attendance->date,
-            'start_time' => $request->input('start_time'),
-            'end_time' => $request->input('end_time'),
-            'break_start' => $request->input('break_start'),
-            'break_end' => $request->input('break_end'),
-            'note' => $request->input('note'),
-            'status' => 'pending',
-        ]);
+    StampCorrectionRequest::create([
+        'user_id' => \Auth::id(),
+        'attendance_id' => $attendance->id,
+        'date' => $attendance->date,
+        'start_time' => $request->input('start_time'),
+        'end_time' => $request->input('end_time'),
+        'break_start' => $request->input('break_start'),
+        'break_end' => $request->input('break_end'),
+        'note' => $request->input('note'),
+        'status' => 'pending',
+    ]);
 
-        return redirect()
-            ->route('attendance.detail', $attendance->id);
-    }
+    return redirect()->route('attendance.detail', $attendance->id);
+}
 
 
     public function index(Request $request)

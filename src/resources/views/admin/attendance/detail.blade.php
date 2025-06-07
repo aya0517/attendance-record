@@ -42,20 +42,29 @@
                 </td>
             </tr>
 
+            @for ($i = 0; $i < 2; $i++)
             <tr>
-                <th>休憩</th>
+                <th>休憩{{ $i + 1 }}</th>
                 <td>
-                    <input type="time" name="break_start" value="{{ old('break_start', optional($attendance->breaks->first())->started_at ? \Carbon\Carbon::parse($attendance->breaks->first()->started_at)->format('H:i') : '') }}" class="time-box">
+                    <input type="time" name="breaks[{{ $i }}][started_at]"
+                        value="{{ old("breaks.$i.started_at", isset($attendance->breaks[$i]) && $attendance->breaks[$i]->started_at ? \Carbon\Carbon::parse($attendance->breaks[$i]->started_at)->format('H:i') : '') }}"
+                        class="time-box">
+
                     <span class="time-separator">〜</span>
-                    <input type="time" name="break_end" value="{{ old('break_end', optional($attendance->breaks->first())->ended_at ? \Carbon\Carbon::parse($attendance->breaks->first()->ended_at)->format('H:i') : '') }}" class="time-box">
-                    @if ($errors->has('break_start'))
-                        <p class="error-text">{{ $errors->first('break_start') }}</p>
+
+                    <input type="time" name="breaks[{{ $i }}][ended_at]"
+                        value="{{ old("breaks.$i.ended_at", isset($attendance->breaks[$i]) && $attendance->breaks[$i]->ended_at ? \Carbon\Carbon::parse($attendance->breaks[$i]->ended_at)->format('H:i') : '') }}"
+                        class="time-box">
+
+                    @if ($errors->has("breaks.$i.started_at"))
+                        <p class="error-text">{{ $errors->first("breaks.$i.started_at") }}</p>
                     @endif
-                    @if ($errors->has('break_end'))
-                        <p class="error-text">{{ $errors->first('break_end') }}</p>
+                    @if ($errors->has("breaks.$i.ended_at"))
+                        <p class="error-text">{{ $errors->first("breaks.$i.ended_at") }}</p>
                     @endif
                 </td>
             </tr>
+            @endfor
 
             <tr>
                 <th>備考</th>

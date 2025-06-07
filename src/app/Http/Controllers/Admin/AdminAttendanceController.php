@@ -64,19 +64,17 @@ class AdminAttendanceController extends Controller
             $attendance->note = $request->note;
             $attendance->save();
 
-            $break = $attendance->breaks->first();
-            if ($break) {
-                $break->started_at = $request->break_start;
-                $break->ended_at = $request->break_end;
-                $break->save();
-            } else {
-                $attendance->breaks()->create([
-                    'started_at' => $request->break_start,
-                    'ended_at' => $request->break_end,
-                ]);
+            $attendance->breaks()->delete();
+
+            foreach ($request->input('breaks', []) as $break) {
+                if (!empty($break['started_at']) && !empty($break['ended_at'])) {
+                    $attendance->breaks()->create([
+                        'started_at' => $attendance->date . ' ' . $break['started_at'],
+                        'ended_at' => $attendance->date . ' ' . $break['ended_at'],
+                    ]);
+                }
             }
         });
-
         return redirect()->route('admin.attendance.detail', $id);
     }
 
