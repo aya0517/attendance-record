@@ -1,50 +1,65 @@
 # Attendance-record
 
+## プロジェクトの概要
+
+**Attendance-record** は、従業員の勤怠情報を簡単に管理・確認できる勤怠管理システムです。
+一般ユーザーは自分の出勤・退勤・休憩などの勤怠状況を記録でき、管理者ユーザーは全ユーザーの勤怠状況や修正申請を確認・承認することができます。
 
 ## 環境構築手順
 
--   コンテナを立ち上げるため、以下を実行
+1. コンテナを立ち上げるため、以下を実行：
 
-```
-docker compose up -d --build
-```
+    ```bash
+    docker compose up -d --build
+    ```
 
--   env ファイルの作成をするため、以下を実行
+2. `.env` ファイルを作成するため、以下を実行：
 
-```
-cp src/.env.example src/.env
-```
+    ```bash
+    cp src/.env.example src/.env
+    ```
 
--   php にコンテナに入るため、以下を実行
+3. PHP コンテナに入るため、以下を実行：
 
-```
-docker compose exec php bash
-```
+    ```bash
+    docker compose exec php bash
+    ```
 
--   composer パッケージをインストールするため、以下を実行
+4. Composer パッケージをインストールするため、以下を実行：
 
-```
-composer install
-```
+    ```bash
+    composer install
+    ```
 
--   アプリケーションキーを作成するため、以下を実行
+5. アプリケーションキーを作成するため、以下を実行：
 
-```
-php artisan key:generate
-```
+    ```bash
+    php artisan key:generate
+    ```
 
--   マイグレーションを実行するため、以下を実行
+6. マイグレーションを実行するため、以下を実行：
 
-```
-php artisan migrate
-```
+    ```bash
+    php artisan migrate
+    ```
 
-## 開発でやる必要があること(この手順はアプリ完成時には README から削除する)
+## 使用技術
 
--   view ファイルの作成・修正・削除
--   controller の作成・修正
--   model の作成・修正
--   css の作成・修正・削除(クラス名も直すこと)
--   migration ファイルの作成・修正
--   seeder の作成
--   README.md(このファイル)の修正
+- **フレームワーク**: Laravel
+- **言語**: PHP, HTML, CSS, JavaScript
+- **データベース**: MySQL
+- **Webサーバー**: nginx
+- **開発環境**: Docker, Docker Compose
+- **テスト**: PHPUnit
+
+## 管理者ユーザーおよび一般ユーザーのログイン情報
+
+### 管理者ユーザー
+
+- **メールアドレス**: `admin@example.com`
+- **パスワード**: `admin1234`
+
+### 一般ユーザー
+
+- **メールアドレス**: `user1@example.com`
+- **パスワード**: `user1234`

@@ -33,25 +33,21 @@ class AdminRequestController extends Controller
 
 
     public function approve($id)
-{
-    $request = StampCorrectionRequest::findOrFail($id);
+    {
+        $request = StampCorrectionRequest::findOrFail($id);
 
-    // 関連する attendance を取得して更新
-    $attendance = $request->attendance;
+        $attendance = $request->attendance;
 
-    $attendance->update([
-        'start_time' => $request->start_time,
-        'end_time' => $request->end_time,
-        'break_started_at' => $request->break_start,
-        'break_ended_at' => $request->break_end,
-        'note' => $request->note,
-    ]);
+        $attendance->update([
+            'start_time' => $request->start_time,
+            'end_time' => $request->end_time,                'break_started_at' => $request->break_start,
+            'break_ended_at' => $request->break_end,
+            'note' => $request->note,
+        ]);
 
-    // 修正申請のステータスを approved に更新
-    $request->status = 'approved';
-    $request->save();
+        $request->status = 'approved';
+        $request->save();
 
-    return redirect()->route('admin.requests_approve', $request->id);
-}
-
+        return redirect()->route('admin.requests_approve', $request->id);
+    }
 }

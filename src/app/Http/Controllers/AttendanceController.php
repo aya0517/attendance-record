@@ -96,23 +96,56 @@ class AttendanceController extends Controller
     }
 
     public function showList(Request $request)
-{
-    $user = Auth::user();
+    {
+        $user = Auth::user();
 
-    $monthParam = $request->query('month');
+        $monthParam = $request->query('month');
 
-    $targetDate = $monthParam
-        ? \Carbon\Carbon::createFromFormat('Y-m', $monthParam)->startOfMonth()
-        : now()->startOfMonth();
+        $targetDate = $monthParam
+            ? \Carbon\Carbon::createFromFormat('Y-m', $monthParam)->startOfMonth()
+            : now()->startOfMonth();
 
-    $attendances = Attendance::where('user_id', $user->id)
-        ->with('breaks')
-        ->whereYear('date', $targetDate->year)
-        ->whereMonth('date', $targetDate->month)
-        ->orderBy('date')
-        ->get();
+            $attendances = Attendance::where('user_id', $user->id)
+            ->with('breaks')
+            ->whereYear('date', $targetDate->year)
+            ->whereMonth('date', $targetDate->month)
+            ->orderBy('date')
+            ->get();
 
-    foreach ($attendances as $attendance) {
+        foreach ($attendances as $attendance) {
+            $totalBreakSeconds = $attendance->breaks->sum(function ($break) {
+                if ($break->started_at && $break->ended_at) {
+                    return $break->ended_at->diffInSeconds($break->started_at);
+                }
+                return 0;
+            });
+
+            $attendance->break_duration = gmdate('H:i', $totalBreakSeconds);
+
+            if ($attendance->start_time && $attendance->end_time) {
+                $totalWorkSeconds = \Carbon\Carbon::parse($attendance->end_time)
+                    ->diffInSeconds(\Carbon\Carbon::parse($attendance->start_time)) - $totalBreakSeconds;
+
+                $attendance->total_work_time = gmdate('H:i', $totalWorkSeconds);
+            } else {
+                $attendance->total_work_time = '';
+            }
+        }
+
+        return view('attendance_list', [
+            'attendances' => $attendances,
+            'currentMonth' => $targetDate,
+            'prevMonth' => $targetDate->copy()->subMonth()->format('Y-m'),
+            'nextMonth' => $targetDate->copy()->addMonth()->format('Y-m'),
+        ]);
+    }
+
+    public function showDetail($id)
+    {
+        $pendingRequest = false;
+
+        $attendance = Attendance::with('breaks')->findOrFail($id);
+
         $totalBreakSeconds = $attendance->breaks->sum(function ($break) {
             if ($break->started_at && $break->ended_at) {
                 return $break->ended_at->diffInSeconds($break->started_at);
@@ -120,76 +153,40 @@ class AttendanceController extends Controller
             return 0;
         });
 
-        $attendance->break_duration = gmdate('H:i', $totalBreakSeconds);
+        $breakDuration = gmdate('H:i', $totalBreakSeconds);
 
         if ($attendance->start_time && $attendance->end_time) {
             $totalWorkSeconds = \Carbon\Carbon::parse($attendance->end_time)
                 ->diffInSeconds(\Carbon\Carbon::parse($attendance->start_time)) - $totalBreakSeconds;
 
-            $attendance->total_work_time = gmdate('H:i', $totalWorkSeconds);
+            $totalWorkTime = gmdate('H:i', $totalWorkSeconds);
         } else {
-            $attendance->total_work_time = '';
+            $totalWorkTime = '';
         }
+
+        $pendingRequest = StampCorrectionRequest::where('attendance_id', $attendance->id)
+            ->where('status', 'pending')
+            ->exists();
+
+        return view('attendance_detail', compact('attendance', 'breakDuration', 'totalWorkTime', 'pendingRequest'));
     }
-
-    return view('attendance_list', [
-        'attendances' => $attendances,
-        'currentMonth' => $targetDate,
-        'prevMonth' => $targetDate->copy()->subMonth()->format('Y-m'),
-        'nextMonth' => $targetDate->copy()->addMonth()->format('Y-m'),
-    ]);
-}
-
-
-    public function showDetail($id)
-{
-    $pendingRequest = false;
-
-    $attendance = Attendance::with('breaks')->findOrFail($id);
-
-    $totalBreakSeconds = $attendance->breaks->sum(function ($break) {
-        if ($break->started_at && $break->ended_at) {
-            return $break->ended_at->diffInSeconds($break->started_at);
-        }
-        return 0;
-    });
-
-    $breakDuration = gmdate('H:i', $totalBreakSeconds);
-
-    if ($attendance->start_time && $attendance->end_time) {
-        $totalWorkSeconds = \Carbon\Carbon::parse($attendance->end_time)
-            ->diffInSeconds(\Carbon\Carbon::parse($attendance->start_time)) - $totalBreakSeconds;
-
-        $totalWorkTime = gmdate('H:i', $totalWorkSeconds);
-    } else {
-        $totalWorkTime = '';
-    }
-
-    $pendingRequest = StampCorrectionRequest::where('attendance_id', $attendance->id)
-        ->where('status', 'pending')
-        ->exists();
-
-    return view('attendance_detail', compact('attendance', 'breakDuration', 'totalWorkTime', 'pendingRequest'));
-}
 
     public function update(AttendanceRequest $request, $id)
-{
-    $attendance = Attendance::findOrFail($id);
+    {
+        $attendance = Attendance::findOrFail($id);
 
-    StampCorrectionRequest::create([
-        'attendance_id' => $attendance->id,
-        'user_id' => auth()->id(),
-        'date' => $attendance->date,
-        'start_time' => $request->input('start_time'),
-        'end_time' => $request->input('end_time'),
-        'break_start' => $request->input('break_start'),
-        'break_end' => $request->input('break_end'),
-        'note' => $request->input('note'),
-        'status' => 'pending',
-    ]);
+        StampCorrectionRequest::create([
+            'attendance_id' => $attendance->id,
+            'user_id' => auth()->id(),
+            'date' => $attendance->date,
+            'start_time' => $request->input('start_time'),
+            'end_time' => $request->input('end_time'),
+            'break_start' => $request->input('break_start'),
+            'break_end' => $request->input('break_end'),
+            'note' => $request->input('note'),
+            'status' => 'pending',
+        ]);
 
-    return redirect()->route('attendance.detail', $attendance->id);
-}
-
-
+        return redirect()->route('attendance.detail', $attendance->id);
+    }
 }

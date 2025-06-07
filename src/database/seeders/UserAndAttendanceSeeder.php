@@ -32,21 +32,21 @@ class UserAndAttendanceSeeder extends Seeder
         'email_verified_at' => now(),
         'password' => Hash::make('user1234'),
         'is_admin' => false,
-    ]);
+        ]);
 
-    $startDate = Carbon::now()->subMonths(4)->startOfMonth();
-    $endDate = Carbon::now()->endOfMonth();
-    $date = $startDate->copy();
+        $startDate = Carbon::now()->subMonths(4)->startOfMonth();
+        $endDate = Carbon::now()->endOfMonth();
+        $date = $startDate->copy();
 
-    while ($date->lte($endDate)) {
-        if (!in_array($date->dayOfWeekIso, [6, 7])) {
-            Attendance::factory()->create([
-                'user_id' => $user->id,
-                'date' => $date->format('Y-m-d'),
-            ]);
+        while ($date->lte($endDate)) {
+            if (!in_array($date->dayOfWeekIso, [6, 7])) {
+                Attendance::factory()->create([
+                    'user_id' => $user->id,
+                    'date' => $date->format('Y-m-d'),
+                ]);
+            }
+            $date->addDay();
         }
-        $date->addDay();
-    }
 
         User::factory()->count(4)->create([
             'is_admin' => false,
@@ -66,5 +66,4 @@ class UserAndAttendanceSeeder extends Seeder
             }
         });
     }
-
 }

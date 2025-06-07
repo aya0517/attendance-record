@@ -28,15 +28,14 @@
             <tr>
                 <th>出勤・退勤</th>
                 <td>
-                    <input type="time" name="start_time" 
-                        value="{{ old('start_time', optional($attendance->start_time ? \Carbon\Carbon::parse($attendance->start_time) : null)->format('H:i')) }}" 
+                    <input type="time" name="start_time"
+                        value="{{ old('start_time', optional($attendance->start_time ? \Carbon\Carbon::parse($attendance->start_time) : null)->format('H:i')) }}"
                         class="time-box" {{ $pendingRequest ? 'readonly' : '' }}>
                     <span class="time-separator">〜</span>
-                    <input type="time" name="end_time" 
-                        value="{{ old('end_time', optional($attendance->end_time ? \Carbon\Carbon::parse($attendance->end_time) : null)->format('H:i')) }}" 
+                    <input type="time" name="end_time"
+                        value="{{ old('end_time', optional($attendance->end_time ? \Carbon\Carbon::parse($attendance->end_time) : null)->format('H:i')) }}"
                         class="time-box" {{ $pendingRequest ? 'readonly' : '' }}>
 
-                    {{-- 出勤・退勤エラー --}}
                     @if ($errors->has('start_time'))
                         <p class="error-text">{{ $errors->first('start_time') }}</p>
                     @endif
@@ -58,7 +57,6 @@
                         value="{{ old("breaks.$i.ended_at", isset($attendance->breaks[$i]) && $attendance->breaks[$i]->ended_at ? \Carbon\Carbon::parse($attendance->breaks[$i]->ended_at)->format('H:i') : '') }}"
                         class="time-box" {{ $pendingRequest ? 'readonly' : '' }}>
 
-                    {{-- 休憩エラー --}}
                     @if ($errors->has("breaks.$i.started_at"))
                         <p class="error-text">{{ $errors->first("breaks.$i.started_at") }}</p>
                     @endif
@@ -73,7 +71,6 @@
                 <th>備考</th>
                 <td>
                     <textarea name="note" class="note-area" {{ $pendingRequest ? 'readonly' : '' }}>{{ old('note', $attendance->note ?? '') }}</textarea>
-                    {{-- 備考エラー --}}
                     @if ($errors->has('note'))
                         <p class="error-text">{{ $errors->first('note') }}</p>
                     @endif

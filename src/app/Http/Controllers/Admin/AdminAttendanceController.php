@@ -21,8 +21,7 @@ class AdminAttendanceController extends Controller
         $attendances = Attendance::with('user')->orderBy('date', 'desc')->get();
 
         return view('admin.attendance.list', compact('attendances', 'currentDate', 'prevDate', 'nextDate'));
-}
-
+    }
 
     public function showDaily(Request $request)
     {
@@ -77,5 +76,4 @@ class AdminAttendanceController extends Controller
         });
         return redirect()->route('admin.attendance.detail', $id);
     }
-
 }

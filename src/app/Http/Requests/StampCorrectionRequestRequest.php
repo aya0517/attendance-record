@@ -36,38 +36,37 @@ class StampCorrectionRequestRequest extends FormRequest
     }
 
     public function withValidator($validator)
-{
-    $validator->after(function ($validator) {
-        $start = strtotime($this->input('start_time'));
-        $end = strtotime($this->input('end_time'));
+    {
+        $validator->after(function ($validator) {
+            $start = strtotime($this->input('start_time'));
+            $end = strtotime($this->input('end_time'));
 
-        $hasInvalidTime = false;
+            $hasInvalidTime = false;
 
-        if ($start !== false && $end !== false && $start >= $end) {
-            $hasInvalidTime = true;
-        }
-
-        foreach ($this->input('breaks', []) as $i => $break) {
-            $breakStart = isset($break['started_at']) ? strtotime($break['started_at']) : false;
-            $breakEnd = isset($break['ended_at']) ? strtotime($break['ended_at']) : false;
-
-            if ($breakStart !== false && ($breakStart > $end)) {
+            if ($start !== false && $end !== false && $start >= $end) {
                 $hasInvalidTime = true;
             }
 
-            if ($breakEnd !== false && ($breakEnd > $end)) {
-                $hasInvalidTime = true;
+            foreach ($this->input('breaks', []) as $i => $break) {
+                $breakStart = isset($break['started_at']) ? strtotime   ($break['started_at']) : false;
+                $breakEnd = isset($break['ended_at']) ? strtotime($break['ended_at']) : false;
+
+                if ($breakStart !== false && ($breakStart > $end)) {
+                    $hasInvalidTime = true;
+                }
+
+                if ($breakEnd !== false && ($breakEnd > $end)) {
+                    $hasInvalidTime = true;
+                }
             }
-        }
 
-        if ($hasInvalidTime) {
-            $validator->errors()->add('start_time', '出勤時間もしくは退勤時間が不適切な値です');
-        }
+            if ($hasInvalidTime) {
+                $validator->errors()->add('start_time', '出勤時間もしくは退勤時間が不適切な値です');
+            }
 
-        if (trim($this->input('note', '')) === '') {
-            $validator->errors()->add('note', '備考を記入してください');
-        }
-    });
-}
-
+            if (trim($this->input('note', '')) === '') {
+                $validator->errors()->add('note', '備考を記入してください');
+            }
+        });
+    }
 }

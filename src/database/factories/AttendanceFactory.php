@@ -31,24 +31,23 @@ class AttendanceFactory extends Factory
     }
 
     public function configure()
-{
-    return $this->afterCreating(function (Attendance $attendance) {
-        $start = Carbon::createFromFormat('H:i', $attendance->start_time);
+    {
+        return $this->afterCreating(function (Attendance $attendance) {
+            $start = Carbon::createFromFormat('H:i', $attendance->start_time);
 
-        $break1Start = $start->copy()->addHours(3);
-        $break1End = $break1Start->copy()->addMinutes(rand(15, 30));
-        $attendance->breaks()->create([
-            'started_at' => $break1Start->format('Y-m-d H:i:s'),
-            'ended_at' => $break1End->format('Y-m-d H:i:s'),
-        ]);
+            $break1Start = $start->copy()->addHours(3);
+            $break1End = $break1Start->copy()->addMinutes(rand(15, 30));
+            $attendance->breaks()->create([
+                'started_at' => $break1Start->format('Y-m-d H:i:s'),
+                'ended_at' => $break1End->format('Y-m-d H:i:s'),
+            ]);
 
-        $break2Start = $break1End->copy()->addHours(2);
-        $break2End = $break2Start->copy()->addMinutes(rand(10, 20));
-        $attendance->breaks()->create([
-            'started_at' => $break2Start->format('Y-m-d H:i:s'),
-            'ended_at' => $break2End->format('Y-m-d H:i:s'),
-        ]);
-    });
-}
-
+            $break2Start = $break1End->copy()->addHours(2);
+            $break2End = $break2Start->copy()->addMinutes(rand(10, 20));
+            $attendance->breaks()->create([
+                'started_at' => $break2Start->format('Y-m-d H:i:s'),
+                'ended_at' => $break2End->format('Y-m-d H:i:s'),
+            ]);
+        });
+    }
 }

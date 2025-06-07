@@ -36,37 +36,35 @@ class AttendanceRequest extends FormRequest
     }
 
     public function withValidator($validator)
-{
-    $validator->after(function ($validator) {
-        $start = strtotime($this->input('start_time'));
-        $end = strtotime($this->input('end_time'));
+    {
+        $validator->after(function ($validator) {
+            $start = strtotime($this->input('start_time'));
+            $end = strtotime($this->input('end_time'));
 
-        $hasInvalidTime = false;
+            $hasInvalidTime = false;
 
-        if ($start !== false && $end !== false && $start >= $end) {
-            $hasInvalidTime = true;
-        }
+            if ($start !== false && $end !== false && $start >= $end) {
+                $hasInvalidTime = true;
+            }
 
-        $breakStart = strtotime($this->input('break_start'));
-        $breakEnd = strtotime($this->input('break_end'));
+            $breakStart = strtotime($this->input('break_start'));
+            $breakEnd = strtotime($this->input('break_end'));
 
-        if ($breakStart !== false && ($breakStart < $start || $breakStart > $end)) {
-            $hasInvalidTime = true;
-        }
+            if ($breakStart !== false && ($breakStart < $start ||   $breakStart > $end)) {
+                $hasInvalidTime = true;
+            }
 
-        if ($breakEnd !== false && ($breakEnd < $start || $breakEnd > $end)) {
-            $hasInvalidTime = true;
-        }
+            if ($breakEnd !== false && ($breakEnd < $start || $breakEnd > $end)) {
+                $hasInvalidTime = true;
+            }
 
-        if ($hasInvalidTime) {
-            $validator->errors()->add('start_time', '出勤時間もしくは退勤時間が不適切な値です');
-        }
+            if ($hasInvalidTime) {
+                $validator->errors()->add('start_time', '出勤時間もしくは退勤時間が不適切な値です');
+            }
 
-        if (trim($this->input('note', '')) === '') {
-            $validator->errors()->add('note', '備考を記入してください');
-        }
-    });
-}
-
-
+            if (trim($this->input('note', '')) === '') {
+                $validator->errors()->add('note', '備考を記入してください');
+            }
+        });
+    }
 }
