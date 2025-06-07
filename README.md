@@ -43,7 +43,11 @@
     php artisan migrate
     ```
 
+7. シーディングを実行するため、以下を実行：
+
+    ```bash
     php artisan db:seed
+    ```
 
 ## 使用技術
 
