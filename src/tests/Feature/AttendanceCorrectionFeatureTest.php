@@ -71,7 +71,7 @@ StampCorrectionRequest::factory()->create([
             'note' => 'Break after end',
         ]);
 
-        $response->assertSessionHasErrors(['break_start']);
+        $response->assertSessionHasErrors(['break_end']);
     }
 
     /** @test */
