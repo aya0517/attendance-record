@@ -14,6 +14,10 @@ return new class extends Migration {
             $table->time('start_time')->nullable();
             $table->time('end_time')->nullable();
             $table->text('note')->nullable();
+            $table->string('status')->default('off');
+            $table->boolean('on_break')->default(false);
+            $table->time('break_started_at')->nullable();
+            $table->time('break_ended_at')->nullable();
             $table->timestamps();
         });
     }
