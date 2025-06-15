@@ -28,6 +28,10 @@ class RegisterController extends Controller
 
         Auth::login($user);
 
-        return redirect()->route('attendance');
+        if ($user->email_verified_at) {
+            return redirect()->route('attendance');
+        } else {
+            return redirect()->route('verification.notice');
+        }
     }
 }

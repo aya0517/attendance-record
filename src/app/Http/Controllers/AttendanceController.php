@@ -7,12 +7,16 @@ use App\Models\Attendance;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Requests\AttendanceRequest;
 use App\Models\StampCorrectionRequest;
+use Illuminate\Support\Facades\Session;
 
 class AttendanceController extends Controller
 {
     public function index()
     {
         $user = Auth::user();
+        if (Session::has('unverified')) {
+            return redirect()->route('verification.notice');
+        }
 
         $attendance = Attendance::where('user_id', $user->id)
             ->whereDate('date', now()->toDateString())

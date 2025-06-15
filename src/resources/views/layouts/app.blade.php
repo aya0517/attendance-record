@@ -14,7 +14,7 @@
 <body>
     <header class="header">
     <div class="header__inner">
-        <a href="{{ url('/') }}" class="header__logo">
+        <a href="{{ url('/attendance') }}" class="header__logo">
             <img src="{{ asset('images/logo.svg') }}" alt="Logo" class="logo-image">
         </a>
 
