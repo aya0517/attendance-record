@@ -69,3 +69,10 @@
 
 - **メールアドレス**: `user1@example.com`
 - **パスワード**: `user1234`
+
+### メール認証機能
+mail trapを使用
+
+- **MAIL_USERNAME**: `f3e884448045a2`
+- **MAIL_PASSWORD**: `8255b48b5436b2`
+
